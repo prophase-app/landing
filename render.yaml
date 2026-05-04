@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: prophase-landing
+    runtime: node
+    plan: free
+    buildCommand: ""
+    startCommand: "node server.js"
+    envVars:
+      - key: PORT
+        sync: false
+      - key: BRAND_NAME
+        value: "Prophase"
+      - key: BRAND_TAGLINE
+        value: "Your career team."
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        value: "Prophase <noreply@prophase.app>"
+      - key: RESEND_TO
+        sync: false
+      - key: SIGNUPS_PATH
+        value: "/opt/render/project/src/data/signups.jsonl"
+    disk:
+      name: signups
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{BRAND_NAME}} &middot; {{BRAND_TAGLINE}}</title>
+<meta name="description" content="{{BRAND_TAGLINE}}">
+<meta property="og:title" content="{{BRAND_NAME}}">
+<meta property="og:description" content="{{BRAND_TAGLINE}}">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/landing-tokens.css">
+<link rel="stylesheet" href="/landing.css">
+</head>
+<body class="landing">
+
+<!-- ═══ Top wordmark + nav ═══ -->
+<header class="topbar">
+  <div class="container">
+    <a href="#" class="brand-mark" aria-label="{{BRAND_NAME}} home">
+      <span class="brand-wordmark">{{BRAND_NAME}}</span>
+      <span class="brand-subtitle">AI Job Hunter</span>
+    </a>
+    <nav class="topbar-nav" aria-label="Primary">
+      <a href="#how-it-works" class="topbar-nav__link">How it works</a>
+      <a href="#pricing" class="topbar-nav__link">Pricing</a>
+      <a href="/early-access" class="topbar-nav__cta">
+        <span>Join Early Access</span>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ═══ 1. Hero ═══ -->
+  <section class="landing-section hero" aria-labelledby="hero-heading">
+    <div class="hero__copy">
+      <h1 id="hero-heading">Don&rsquo;t apply<br>alone.</h1>
+      <p class="hero__brand-line">
+        <strong>{{BRAND_NAME}}</strong> is your personal AI career team.
+      </p>
+      <p class="hero__subhead">
+        Three AI specialists by your side. They find matches, sharpen your story, apply on your behalf, and get sharper every week. Your AI in an AI-driven job market.
+      </p>
+      <div class="cta-cluster">
+        <a class="btn-primary" href="/early-access">
+          <span>Join Early Access</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+      <p class="trust-microline">Two weeks free, and no card required.</p>
+    </div>
+
+    <aside class="hero__feed" aria-label="Live agent activity">
+      <div class="feed-card">
+        <div class="feed-card__header">
+          <span class="live-indicator">
+            <span class="live-dot" aria-hidden="true"></span>
+            LIVE
+          </span>
+          <span class="feed-card__title">Your team, last night</span>
+        </div>
+        <ul class="feed-list">
+          <li class="feed-entry">
+            <span class="feed-entry__time">02:14</span>
+            <span class="feed-entry__agent feed-entry__agent--hunter">Hunter</span>
+            <span class="feed-entry__action">Found a strong match: Director of AI Product at a Series B fintech (94% fit).</span>
+          </li>
+          <li class="feed-entry">
+            <span class="feed-entry__time">02:31</span>
+            <span class="feed-entry__agent feed-entry__agent--hunter">Hunter</span>
+            <span class="feed-entry__action">Filtered out 14 roles below your seniority and direction.</span>
+          </li>
+          <li class="feed-entry">
+            <span class="feed-entry__time">02:47</span>
+            <span class="feed-entry__agent feed-entry__agent--strategist">Strategist</span>
+            <span class="feed-entry__action">Tailored your story for the Linear Senior PM role. Opening line sharpened.</span>
+          </li>
+          <li class="feed-entry">
+            <span class="feed-entry__time">03:08</span>
+            <span class="feed-entry__agent feed-entry__agent--applier">Applier</span>
+            <span class="feed-entry__action">Submitted via Greenhouse. Confirmation captured.</span>
+          </li>
+          <li class="feed-entry">
+            <span class="feed-entry__time">04:02</span>
+            <span class="feed-entry__agent feed-entry__agent--system">System</span>
+            <span class="feed-entry__action">Spotted a pattern: roles framed around &ldquo;agentic&rdquo; raise your reply rate 2.4&times;. Search updated.</span>
+          </li>
+          <li class="feed-entry feed-entry--needs-you">
+            <span class="feed-entry__time">06:30</span>
+            <span class="feed-entry__agent feed-entry__agent--applier">Applier</span>
+            <span class="feed-entry__action"><strong>Needs your input:</strong> recruiter at Datadog replied. Draft response ready.</span>
+          </li>
+        </ul>
+        <div class="feed-card__footer">
+          <span>While you slept, your team worked.</span>
+          <span class="feed-card__count">6 actions overnight</span>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ═══ 2. The market shifted ═══ -->
+  <section class="landing-section">
+    <span class="section-label">01 The market shifted</span>
+    <div class="problem">
+      <p class="problem__pullquote">
+        Employers bring AI to every application. Most candidates still show up without their own. Like bringing a knife to a gunfight.
+      </p>
+
+      <div class="stat-grid" role="list">
+        <div class="stat-tile" role="listitem">
+          <div class="stat-tile__num">87%</div>
+          <div class="stat-tile__label">of large employers use AI to screen applications</div>
+        </div>
+        <div class="stat-tile" role="listitem">
+          <div class="stat-tile__num">&lt;10%</div>
+          <div class="stat-tile__label">of candidates use AI to optimize their search and applications</div>
+        </div>
+        <div class="stat-tile" role="listitem">
+          <div class="stat-tile__num">300:1</div>
+          <div class="stat-tile__label">typical applications-to-interview ratio for cold, manual job seekers in 2026</div>
+        </div>
+      </div>
+
+      <div class="problem__compare" role="list" aria-label="Manual job hunting versus the system">
+        <div class="problem__compare-col problem__compare-col--before" role="listitem">
+          <div class="problem__compare-label">Manually</div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&times;</span>
+            <span class="problem__compare-text">Hours wasted every week, every role</span>
+          </div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&times;</span>
+            <span class="problem__compare-text">Lost in the resume pile, no signal back</span>
+          </div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&times;</span>
+            <span class="problem__compare-text">1 interview per ~300 cold applications</span>
+          </div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&times;</span>
+            <span class="problem__compare-text">Same effort, same results, every month</span>
+          </div>
+        </div>
+        <div class="problem__compare-arrow" aria-hidden="true">&rarr;</div>
+        <div class="problem__compare-col problem__compare-col--after" role="listitem">
+          <div class="problem__compare-label">With {{BRAND_NAME}}</div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&#9679;</span>
+            <span class="problem__compare-text">Specialists working 24/7 on your behalf</span>
+          </div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&#9679;</span>
+            <span class="problem__compare-text">Only roles that match your goals</span>
+          </div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&#9679;</span>
+            <span class="problem__compare-text">More interviews, less effort, every week</span>
+          </div>
+          <div class="problem__compare-row">
+            <span class="problem__compare-icon" aria-hidden="true">&#9679;</span>
+            <span class="problem__compare-text">The system gets sharper as it learns you</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="problem__bridge-line">Better matches. More interviews. Every week.</p>
+    </div>
+  </section>
+
+  <!-- ═══ 3. Meet your team + how they work (combined) ═══ -->
+  <section id="how-it-works" class="landing-section">
+    <span class="section-label">02 Meet your team</span>
+    <h2 class="section-heading">Three AI specialists. One job. Yours.</h2>
+    <p class="section-subhead">Three specialists working in concert. Hunter scans. Strategist sharpens. Applier sends. The team learns what works for you and gets sharper every week.</p>
+
+    <div class="team-grid">
+      <article class="team-detail-card" data-agent="hunter">
+        <div class="team-detail-card__role">AI AGENT 01</div>
+        <h3 class="team-detail-card__name">Job Hunter</h3>
+        <ol class="team-detail-card__steps" aria-label="What the Job Hunter does">
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">01</span>
+            <span class="team-detail-card__step-text">Scans 200+ job boards 24/7</span>
+          </li>
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">02</span>
+            <span class="team-detail-card__step-text">Filters by your goals and seniority</span>
+          </li>
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">03</span>
+            <span class="team-detail-card__step-text">Ranks the strongest matches first</span>
+          </li>
+        </ol>
+        <div class="team-detail-card__metric">
+          <div class="team-detail-card__metric-value">470</div>
+          <div class="team-detail-card__metric-label">roles screened last week</div>
+        </div>
+        <p class="team-detail-card__see"><em>You see:</em> a queue of strong matches.</p>
+      </article>
+
+      <article class="team-detail-card" data-agent="strategist">
+        <div class="team-detail-card__role">AI AGENT 02</div>
+        <h3 class="team-detail-card__name">Job Strategist</h3>
+        <ol class="team-detail-card__steps" aria-label="What the Job Strategist does">
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">01</span>
+            <span class="team-detail-card__step-text">Reads each role carefully</span>
+          </li>
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">02</span>
+            <span class="team-detail-card__step-text">Tailors your story to fit</span>
+          </li>
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">03</span>
+            <span class="team-detail-card__step-text">Sharpens cover letter and resume</span>
+          </li>
+        </ol>
+        <div class="team-detail-card__metric">
+          <div class="team-detail-card__metric-value">120</div>
+          <div class="team-detail-card__metric-label">applications tailored last week</div>
+        </div>
+        <p class="team-detail-card__see"><em>You see:</em> a sharper opening paragraph.</p>
+      </article>
+
+      <article class="team-detail-card" data-agent="applier">
+        <div class="team-detail-card__role">AI AGENT 03</div>
+        <h3 class="team-detail-card__name">Job Applier</h3>
+        <ol class="team-detail-card__steps" aria-label="What the Job Applier does">
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">01</span>
+            <span class="team-detail-card__step-text">Submits through the right ATS</span>
+          </li>
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">02</span>
+            <span class="team-detail-card__step-text">Captures every confirmation</span>
+          </li>
+          <li class="team-detail-card__step">
+            <span class="team-detail-card__step-num">03</span>
+            <span class="team-detail-card__step-text">Surfaces only what needs you</span>
+          </li>
+        </ol>
+        <div class="team-detail-card__metric">
+          <div class="team-detail-card__metric-value">80</div>
+          <div class="team-detail-card__metric-label">applications submitted last week</div>
+        </div>
+        <p class="team-detail-card__see"><em>You see:</em> applications going out, replies coming back.</p>
+      </article>
+    </div>
+
+    <p class="pipeline-intro">Here&rsquo;s how they hand off work, end to end.</p>
+
+    <div class="pipeline">
+      <div class="pipeline__step">
+        <div class="pipeline__data">
+          <div class="pipeline__data-label">Input</div>
+          <div class="pipeline__data-value">Resume + Career Goals</div>
+        </div>
+      </div>
+
+      <div class="pipeline__arrow" aria-hidden="true">&darr;</div>
+
+      <div class="pipeline__step pipeline__step--agent" data-agent="hunter">
+        <div class="pipeline__agent-tag">JOB HUNTER</div>
+        <div class="pipeline__agent-name">Always finding your next match.</div>
+        <div class="pipeline__agent-flow" aria-label="Job Hunter steps">
+          <span class="pipeline__step-pill">Scan market</span>
+          <span class="pipeline__step-arrow" aria-hidden="true">&rarr;</span>
+          <span class="pipeline__step-pill">Filter for fit</span>
+          <span class="pipeline__step-arrow" aria-hidden="true">&rarr;</span>
+          <span class="pipeline__step-pill">Rank by match</span>
+        </div>
+      </div>
+
+      <div class="pipeline__arrow" aria-hidden="true">&darr;</div>
+
+      <div class="pipeline__step">
+        <div class="pipeline__data">
+          <div class="pipeline__data-label">State</div>
+          <div class="pipeline__data-value">Strong-fit matches, ranked</div>
+        </div>
+      </div>
+
+      <div class="pipeline__arrow" aria-hidden="true">&darr;</div>
+
+      <div class="pipeline__step pipeline__step--agent" data-agent="strategist">
+        <div class="pipeline__agent-tag">JOB STRATEGIST</div>
+        <div class="pipeline__agent-name">Sharpens your story for every role.</div>
+        <div class="pipeline__agent-flow" aria-label="Job Strategist steps">
+          <span class="pipeline__step-pill">Read the role</span>
+          <span class="pipeline__step-arrow" aria-hidden="true">&rarr;</span>
+          <span class="pipeline__step-pill">Tailor your story</span>
+          <span class="pipeline__step-arrow" aria-hidden="true">&rarr;</span>
+          <span class="pipeline__step-pill">Sharpen the pitch</span>
+        </div>
+      </div>
+
+      <div class="pipeline__arrow" aria-hidden="true">&darr;</div>
+
+      <div class="pipeline__step">
+        <div class="pipeline__data">
+          <div class="pipeline__data-label">State</div>
+          <div class="pipeline__data-value">Application packets, tailored</div>
+        </div>
+      </div>
+
+      <div class="pipeline__arrow" aria-hidden="true">&darr;</div>
+
+      <div class="pipeline__step pipeline__step--agent" data-agent="applier">
+        <div class="pipeline__agent-tag">JOB APPLIER</div>
+        <div class="pipeline__agent-name">Applies on your behalf.</div>
+        <div class="pipeline__agent-flow" aria-label="Job Applier steps">
+          <span class="pipeline__step-pill">Submit application</span>
+          <span class="pipeline__step-arrow" aria-hidden="true">&rarr;</span>
+          <span class="pipeline__step-pill">Capture confirmation</span>
+          <span class="pipeline__step-arrow" aria-hidden="true">&rarr;</span>
+          <span class="pipeline__step-pill">Surface replies</span>
+        </div>
+      </div>
+
+      <div class="pipeline__arrow" aria-hidden="true">&darr;</div>
+
+      <div class="pipeline__step">
+        <div class="pipeline__data">
+          <div class="pipeline__data-label">Output</div>
+          <div class="pipeline__data-value">Interviews scheduled</div>
+        </div>
+      </div>
+
+      <div class="pipeline__arrow" aria-hidden="true">&crarr;</div>
+
+      <div class="pipeline__step pipeline__step--loop">
+        <div class="pipeline__loop-label">The system learns what works for you.</div>
+        <div class="pipeline__loop-detail">Every reply feeds back. Patterns emerge. The team gets sharper. More interviews every week.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 4. Your interview rate climbs every week ═══ -->
+  <section class="landing-section">
+    <span class="section-label">03 Your interview rate</span>
+    <h2 class="section-heading">More applications. More interviews. Better odds every week.</h2>
+    <p class="section-subhead">{{BRAND_NAME}} tunes itself toward what works for you. The pattern shows up in your interview conversion rate, the only KPI that matters in a job search.</p>
+
+    <div class="rate-chart" aria-label="Interviews generated per week over 12 weeks">
+      <div class="rate-chart__stats">
+        <div class="rate-chart__stat">
+          <span class="rate-chart__stat-value">840</span>
+          <span class="rate-chart__stat-label">applications submitted</span>
+        </div>
+        <div class="rate-chart__stat">
+          <span class="rate-chart__stat-value">45</span>
+          <span class="rate-chart__stat-label">interviews generated</span>
+        </div>
+        <div class="rate-chart__stat rate-chart__stat--highlight">
+          <span class="rate-chart__stat-value">5%</span>
+          <span class="rate-chart__stat-label">conversion rate, climbing from 0%</span>
+        </div>
+      </div>
+
+      <div class="rate-chart__viz">
+        <svg viewBox="0 0 720 240" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Line graph showing interviews generated per week, climbing with variance from 0 in week 1 to 9 in week 12">
+          <!-- Baseline + dotted gridlines -->
+          <line x1="56" y1="200" x2="696" y2="200" stroke="#d8dfe9" stroke-width="1"/>
+          <line x1="56" y1="154" x2="696" y2="154" stroke="#d8dfe9" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="56" y1="108" x2="696" y2="108" stroke="#d8dfe9" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="56" y1="62"  x2="696" y2="62"  stroke="#d8dfe9" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="56" y1="16"  x2="696" y2="16"  stroke="#d8dfe9" stroke-width="1" stroke-dasharray="2 4"/>
+
+          <!-- Y-axis labels -->
+          <text x="48" y="204" text-anchor="end" fill="#6a7488" font-size="10" font-family="JetBrains Mono">0</text>
+          <text x="48" y="158" text-anchor="end" fill="#6a7488" font-size="10" font-family="JetBrains Mono">3</text>
+          <text x="48" y="112" text-anchor="end" fill="#6a7488" font-size="10" font-family="JetBrains Mono">6</text>
+          <text x="48" y="66"  text-anchor="end" fill="#6a7488" font-size="10" font-family="JetBrains Mono">9</text>
+          <text x="48" y="20"  text-anchor="end" fill="#6a7488" font-size="10" font-family="JetBrains Mono">12</text>
+
+          <!-- Filled area under the line -->
+          <path d="M 56,200 L 114,185 L 173,185 L 231,169 L 289,169 L 347,154 L 405,154 L 464,123 L 522,138 L 580,92 L 638,108 L 696,62 L 696,200 L 56,200 Z"
+                fill="#ff5e1a" fill-opacity="0.10"/>
+
+          <!-- Line: interviews per week, climbing with variance -->
+          <polyline points="56,200 114,185 173,185 231,169 289,169 347,154 405,154 464,123 522,138 580,92 638,108 696,62"
+                    fill="none" stroke="#ff5e1a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+
+          <!-- Dots at each weekly data point -->
+          <g>
+            <circle cx="56"  cy="200" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="114" cy="185" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="173" cy="185" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="231" cy="169" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="289" cy="169" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="347" cy="154" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="405" cy="154" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="464" cy="123" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="522" cy="138" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="580" cy="92"  r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="638" cy="108" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle cx="696" cy="62"  r="5" fill="#ff5e1a" stroke="#ff5e1a" stroke-width="2"/>
+          </g>
+
+          <!-- Final point annotation -->
+          <text x="696" y="48" text-anchor="middle" fill="#0d1426" font-size="14" font-family="Space Grotesk" font-weight="700">9</text>
+
+          <!-- X-axis week labels (subset) -->
+          <text x="56"  y="224" text-anchor="middle" fill="#6a7488" font-size="10" font-family="JetBrains Mono">W1</text>
+          <text x="231" y="224" text-anchor="middle" fill="#6a7488" font-size="10" font-family="JetBrains Mono">W4</text>
+          <text x="405" y="224" text-anchor="middle" fill="#6a7488" font-size="10" font-family="JetBrains Mono">W7</text>
+          <text x="580" y="224" text-anchor="middle" fill="#6a7488" font-size="10" font-family="JetBrains Mono">W10</text>
+          <text x="696" y="224" text-anchor="middle" fill="#6a7488" font-size="10" font-family="JetBrains Mono">W12</text>
+        </svg>
+      </div>
+      <div class="rate-chart__axis-label">Interviews generated per week</div>
+
+      <p class="rate-chart__caption">
+        Illustrative trajectory for a founding-cohort member over 12 weeks. Real journeys have variance week to week. The trend goes up.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══ 6. Pricing ═══ -->
+  <section id="pricing" class="landing-section">
+    <span class="section-label">04 Pricing</span>
+    <h2 class="section-heading">Early access pricing.</h2>
+    <p class="section-subhead">Founding rates locked for one year. Lock in while we&rsquo;re in early access.</p>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-card__tier">Free</div>
+        <div class="price-card__strike price-card__strike--ghost" aria-hidden="true">&nbsp;</div>
+        <div class="price-card__numeral">Free</div>
+        <div class="price-card__price-note price-card__price-note--ghost" aria-hidden="true">&nbsp;</div>
+        <p class="price-card__tagline">Organize your job search.</p>
+        <ul class="price-card__features">
+          <li>Job tracking dashboard</li>
+          <li>Resume analysis</li>
+          <li>AI credits</li>
+          <li>Community access</li>
+        </ul>
+      </div>
+      <div class="price-card price-card--recommended">
+        <div class="price-card__pill">Recommended</div>
+        <div class="price-card__tier">Standard</div>
+        <div class="price-card__strike">$50 / month</div>
+        <div class="price-card__numeral">$40<span class="price-card__suffix">/ month</span></div>
+        <div class="price-card__price-note">Early Access pricing &middot; Save 20%</div>
+        <p class="price-card__tagline">AI-assisted applications.</p>
+        <ul class="price-card__features">
+          <li>Automated job search</li>
+          <li>Personalized resumes, cover letters, and form answers</li>
+          <li>Autonomous job application</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="price-card__tier">Premium</div>
+        <div class="price-card__strike">$200 / month</div>
+        <div class="price-card__numeral">$160<span class="price-card__suffix">/ month</span></div>
+        <div class="price-card__price-note">Early Access pricing &middot; Save 20%</div>
+        <p class="price-card__tagline">Fully autonomous interview generation.</p>
+        <ul class="price-card__features">
+          <li>Scheduled overnight runs</li>
+          <li>Strategy optimization loop</li>
+          <li>Direct line to the founders</li>
+        </ul>
+      </div>
+    </div>
+    <p class="pricing-footer">Founding rate locked for one year. Standard price applies after.</p>
+
+    <div class="pricing-cta">
+      <a class="btn-primary" href="/early-access">
+        <span>Join Early Access</span>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+      </a>
+      <p class="pricing-cta__note">Two weeks free. No card required.</p>
+    </div>
+  </section>
+
+  <!-- ═══ 7. Founding cohort + final CTA ═══ -->
+  <section class="landing-section trust">
+    <span class="section-label">05 The early-access offer</span>
+    <h2 class="section-heading">Try {{BRAND_NAME}} free for two weeks.</h2>
+    <p class="section-subhead">Two weeks of full access in exchange for your honest feedback. Founding members shape the product, trade hunting strategies, and lock in pricing for a year.</p>
+
+    <div class="offer-grid" role="list">
+      <div class="offer-tile" role="listitem">
+        <div class="offer-tile__num">2</div>
+        <div class="offer-tile__label">weeks of full access</div>
+        <div class="offer-tile__detail">Every agent. Every feature. From day one. No card required.</div>
+      </div>
+      <div class="offer-tile offer-tile--moss" role="listitem">
+        <div class="offer-tile__num">∞</div>
+        <div class="offer-tile__label">community membership</div>
+        <div class="offer-tile__detail">{{BRAND_NAME}} Job Hunters Discord. Founder direct line. Strategies traded between members.</div>
+      </div>
+      <div class="offer-tile offer-tile--clay" role="listitem">
+        <div class="offer-tile__num">20%</div>
+        <div class="offer-tile__label">off your first year</div>
+        <div class="offer-tile__detail">Founding pricing locks the moment you join. Standard rate applies after year one.</div>
+      </div>
+    </div>
+
+    <p class="trust__advisors">Advisors &middot; Coming soon</p>
+
+    <div class="trust__cta-cluster">
+      <a class="btn-primary" href="/early-access">
+        <span>Join Early Access</span>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+      </a>
+      <p class="trust__discount">Two weeks free &middot; No card required &middot; Founding rate locked for a year</p>
+      <p class="trust__early-access">Early Access &middot; 2026</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="landing-footer">
+  <div class="container landing-footer__row">
+    <span>&copy; 2026 {{BRAND_NAME}}</span>
+    <span>Made with care for the next role.</span>
+  </div>
+</footer>
+
+</body>
+</html>

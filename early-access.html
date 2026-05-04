@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{BRAND_NAME}} &middot; Early Access</title>
+<meta name="description" content="Join the {{BRAND_NAME}} Founding Cohort.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/landing-tokens.css">
+<link rel="stylesheet" href="/early-access.css">
+</head>
+<body class="signup">
+
+<header class="topbar">
+  <div class="container">
+    <a href="/" class="brand-mark">
+      <span class="brand-wordmark">{{BRAND_NAME}}</span>
+      <span class="brand-subtitle">AI Job Hunter</span>
+    </a>
+    <a href="/" class="topbar-back">&larr; Back to home</a>
+  </div>
+</header>
+
+<main class="container signup-main">
+
+  <section class="signup-hero">
+    <h1 class="signup-heading">Join {{BRAND_NAME}} Early Access.</h1>
+    <p class="signup-subhead">Two weeks of full access. In exchange: your honest feedback and a seat in the {{BRAND_NAME}} Job Hunters community. Founding rate locked for one year.</p>
+  </section>
+
+  <section class="signup-card" id="signup-form-section">
+    <div class="signup-grid">
+      <div class="signup-recap">
+        <div class="signup-recap__title">What you get</div>
+        <ul class="signup-recap__list">
+          <li>
+            <span class="signup-recap__num">2</span>
+            <span class="signup-recap__label">weeks of full access</span>
+            <span class="signup-recap__detail">Every agent. Every feature. From day one.</span>
+          </li>
+          <li>
+            <span class="signup-recap__num signup-recap__num--lime">&infin;</span>
+            <span class="signup-recap__label">community membership</span>
+            <span class="signup-recap__detail">{{BRAND_NAME}} Job Hunters Discord and a direct line to the founders.</span>
+          </li>
+          <li>
+            <span class="signup-recap__num">20%</span>
+            <span class="signup-recap__label">off your first year</span>
+            <span class="signup-recap__detail">Founding pricing locks the moment you join.</span>
+          </li>
+        </ul>
+      </div>
+
+      <form class="signup-form" id="early-access-form" novalidate>
+        <div class="signup-form__title">Tell us about you</div>
+        <div class="signup-form__field">
+          <label for="ea-name">Your name</label>
+          <input type="text" id="ea-name" name="name" required autocomplete="name" maxlength="200">
+        </div>
+        <div class="signup-form__field">
+          <label for="ea-email">Email</label>
+          <input type="email" id="ea-email" name="email" required autocomplete="email" maxlength="200">
+        </div>
+        <div class="signup-form__field">
+          <label for="ea-current-role">Most recent role title</label>
+          <input type="text" id="ea-current-role" name="current_role" autocomplete="organization-title" maxlength="200" placeholder="e.g. Senior Product Manager">
+        </div>
+
+        <div class="signup-form__field signup-form__field--inline">
+          <label class="signup-checkbox">
+            <input type="checkbox" name="currently_employed" value="yes">
+            <span class="signup-checkbox__box" aria-hidden="true"></span>
+            <span class="signup-checkbox__label">I&rsquo;m currently employed in this role</span>
+          </label>
+        </div>
+
+        <div class="signup-form__field">
+          <label for="ea-target-role">Target role title</label>
+          <input type="text" id="ea-target-role" name="target_role" autocomplete="off" maxlength="200" placeholder="e.g. Director of Product">
+        </div>
+
+        <div class="signup-form__field">
+          <label for="ea-linkedin">LinkedIn URL <span class="signup-form__optional">(optional)</span></label>
+          <input type="url" id="ea-linkedin" name="linkedin" autocomplete="url" maxlength="300" placeholder="https://linkedin.com/in/...">
+        </div>
+
+        <div class="signup-form__field">
+          <span class="signup-form__legend">Are you actively applying?</span>
+          <div class="signup-radio-group" role="radiogroup">
+            <label class="signup-radio">
+              <input type="radio" name="actively_applying" value="yes">
+              <span>Yes</span>
+            </label>
+            <label class="signup-radio">
+              <input type="radio" name="actively_applying" value="no">
+              <span>No</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="signup-form__field signup-conditional" id="conditional-current" hidden>
+          <label for="ea-current">What does your job search look like today?</label>
+          <textarea id="ea-current" name="current" rows="3" maxlength="1000" placeholder="Tools you&rsquo;re using, applications sent, replies, interviews. Whatever stats and numbers you can share."></textarea>
+        </div>
+
+        <div class="signup-form__field signup-conditional" id="conditional-duration" hidden>
+          <label for="ea-duration">How long have you been searching?</label>
+          <input type="text" id="ea-duration" name="search_duration" maxlength="100" placeholder="e.g. 3 months, 6 weeks, just started">
+        </div>
+
+        <div class="signup-form__field">
+          <label for="ea-goals">What are you hoping {{BRAND_NAME}} can do for you?</label>
+          <textarea id="ea-goals" name="goals" rows="3" maxlength="1000" placeholder="The outcomes that would make {{BRAND_NAME}} worth your time."></textarea>
+        </div>
+        <button type="submit" class="signup-submit">
+          <span class="signup-submit__label">Join Early Access</span>
+          <span class="signup-submit__arrow" aria-hidden="true">&rarr;</span>
+        </button>
+        <p class="signup-form__note">Your details go directly to the founder. No marketing list, no card required.</p>
+      </form>
+    </div>
+
+    <div class="signup-success" id="signup-success" hidden>
+      <div class="signup-success__mark" aria-hidden="true">&check;</div>
+      <h2 class="signup-success__heading">You&rsquo;re on the list.</h2>
+      <p class="signup-success__detail">Thanks for joining the founding cohort. The founder will reach out when your seat is ready. Keep an eye on your inbox.</p>
+      <a href="/" class="signup-success__back">&larr; Back to home</a>
+    </div>
+
+    <div class="signup-error" id="signup-error" hidden>
+      <p>Something went wrong submitting the form. Please try again, or email <a href="mailto:gembitsky@gmail.com">gembitsky@gmail.com</a> directly.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="landing-footer">
+  <div class="container landing-footer__row">
+    <span>&copy; 2026 {{BRAND_NAME}}</span>
+    <span><a href="/">Back to home</a></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var form = document.getElementById('early-access-form');
+  var successEl = document.getElementById('signup-success');
+  var errorEl = document.getElementById('signup-error');
+  var submitBtn = form.querySelector('.signup-submit');
+
+  // Conditional reveal: show "current search" + "search duration" only
+  // when "Are you actively applying? = Yes"
+  var condCurrent  = document.getElementById('conditional-current');
+  var condDuration = document.getElementById('conditional-duration');
+  function syncConditional() {
+    var picked = form.querySelector('input[name="actively_applying"]:checked');
+    var isYes = picked && picked.value === 'yes';
+    condCurrent.hidden  = !isYes;
+    condDuration.hidden = !isYes;
+  }
+  form.querySelectorAll('input[name="actively_applying"]').forEach(function (el) {
+    el.addEventListener('change', syncConditional);
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errorEl.hidden = true;
+
+    var activelyEl = form.querySelector('input[name="actively_applying"]:checked');
+    var actively = activelyEl ? activelyEl.value : '';
+    var data = {
+      name:               form.elements['name'].value.trim(),
+      email:              form.elements['email'].value.trim(),
+      current_role:       form.elements['current_role'].value.trim(),
+      currently_employed: form.elements['currently_employed'].checked ? 'yes' : 'no',
+      target_role:        form.elements['target_role'].value.trim(),
+      linkedin:           form.elements['linkedin'].value.trim(),
+      actively_applying:  actively,
+      // Only sent when actively_applying === 'yes'
+      current:            actively === 'yes' ? form.elements['current'].value.trim() : '',
+      search_duration:    actively === 'yes' ? form.elements['search_duration'].value.trim() : '',
+      goals:              form.elements['goals'].value.trim()
+    };
+
+    if (!data.name || !data.email) {
+      errorEl.querySelector('p').textContent = 'Name and email are required.';
+      errorEl.hidden = false;
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.querySelector('.signup-submit__label').textContent = 'Sending...';
+
+    fetch('/api/early-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+    .then(function (res) {
+      if (res.ok && res.body && res.body.ok) {
+        form.hidden = true;
+        document.querySelector('.signup-recap').hidden = true;
+        successEl.hidden = false;
+        successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        throw new Error((res.body && res.body.error) || 'submission failed');
+      }
+    })
+    .catch(function () {
+      errorEl.hidden = false;
+      submitBtn.disabled = false;
+      submitBtn.querySelector('.signup-submit__label').textContent = 'Join Early Access';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Landing-page design tokens.
+   Cool, light background. Bright orange brand. Lime accent.
+   Decoupled from dashboard tokens. Not imported by any other surface.
+   To redesign the landing palette: edit the values below; nothing else.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Cool light neutrals — slight blue undertone, never warm. */
+  --paper:        #eef2f8;  /* page background */
+  --paper-soft:   #e4ebf3;  /* card / section surface */
+  --ink:          #0d1426;  /* high-emphasis text, near-black with a cool cast */
+  --ink-body:     #2c3445;  /* body text, cool gray */
+  --ink-mute:     #6a7488;  /* meta text, footnotes, section labels */
+
+  /* Bright vibrant orange — primary brand color, high impact. */
+  --clay:         #ff5e1a;  /* CTA fill, brand-prominent moments, italic emphasis */
+  --clay-deep:    #e54c0e;  /* hover, active state for primary CTA */
+
+  /* Lime — accent. Used sparingly: live indicators, positive growth signals.
+     Use --moss for borders/dots/backgrounds/large color blocks (visual chrome).
+     Use --moss-deep for any text or small glyph where readability matters,
+     since lime fails contrast against the light cool background. */
+  --moss:         #bce533;  /* accent visual (was sage in the old palette) */
+  --moss-deep:    #16a34a;  /* brighter emerald for text where the lime fails contrast.
+                               Pops next to the bright orange instead of feeling muted.
+                               Was #2d7a18 (dark olive); the dark version read as out
+                               of place against the brand's vibrancy. */
+
+  /* Teal — third agent color (Job Applier). Cool, balances orange/lime. */
+  --teal:         #1ca7a7;
+
+  /* Hairlines & shadow — cool. */
+  --sand:         #d8dfe9;  /* hairline dividers, card borders */
+  --shadow-soft:  rgba(13, 20, 38, 0.08);
+
+  /* Type scale (1280px viewport) */
+  --type-h1:        96px;
+  --type-h2:        56px;
+  --type-subhead:   22px;
+  --type-body:      18px;
+  --type-detail:    16px;
+  --type-button:    16px;
+  --type-label:     12px;
+  --type-meta:      14px;
+  --type-numeral:   64px;
+
+  /* Layout */
+  --content-max:    1040px;
+  --section-gap:    144px;
+  --side-pad:       48px;
+  --line-height:    1.55;
+
+  /* Radii — clean, slight rounding. */
+  --radius-card:    4px;
+  --radius-button:  6px;
+}
