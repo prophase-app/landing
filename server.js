@@ -13,6 +13,10 @@ const BRAND = {
   name: process.env.BRAND_NAME || 'Prophase',
   tagline: process.env.BRAND_TAGLINE || 'Your career team.',
 };
+const POSTHOG = {
+  key:  process.env.POSTHOG_KEY  || '',
+  host: process.env.POSTHOG_HOST || 'https://us.i.posthog.com',
+};
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const RESEND_FROM = process.env.RESEND_FROM || 'Prophase <noreply@prophase.app>';
 const RESEND_TO = process.env.RESEND_TO || '';
@@ -148,10 +152,10 @@ function handler(req, res) {
   catch (_) { return send(res, 400, 'Bad Request'); }
 
   if (req.method === 'GET' && urlPath === '/') {
-    return send(res, 200, renderLandingHtml(BRAND), 'text/html; charset=utf-8');
+    return send(res, 200, renderLandingHtml(BRAND, POSTHOG), 'text/html; charset=utf-8');
   }
   if (req.method === 'GET' && urlPath === '/early-access') {
-    return send(res, 200, renderEarlyAccessHtml(BRAND), 'text/html; charset=utf-8');
+    return send(res, 200, renderEarlyAccessHtml(BRAND, POSTHOG), 'text/html; charset=utf-8');
   }
   if (req.method === 'GET' && STATIC_CSS[urlPath]) {
     return serveStatic(res, path.join(__dirname, STATIC_CSS[urlPath]), 'text/css; charset=utf-8');
