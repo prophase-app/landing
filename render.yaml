@@ -18,9 +18,3 @@ services:
         value: "Prophase <noreply@prophase.app>"
       - key: RESEND_TO
         sync: false
-      - key: SIGNUPS_PATH
-        value: "/opt/render/project/src/data/signups.jsonl"
-    disk:
-      name: signups
-      mountPath: /opt/render/project/src/data
-      sizeGB: 1
