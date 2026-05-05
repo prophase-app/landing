@@ -6,8 +6,6 @@ services:
     buildCommand: ""
     startCommand: "node server.js"
     envVars:
-      - key: PORT
-        sync: false
       - key: BRAND_NAME
         value: "Prophase"
       - key: BRAND_TAGLINE
