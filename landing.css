@@ -1241,3 +1241,233 @@ body.landing {
   justify-content: space-between;
   align-items: center;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE OPTIMIZATIONS — additive only.
+   Every rule below is wrapped in @media; desktop cascade unaffected.
+   Two breakpoints: 960px (tablet) and 640px (phone).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Tablet: viewport too narrow for the densest 3-col grids and giant numerals. */
+@media (max-width: 960px) {
+  body.landing { overflow-x: hidden; }
+
+  .landing .container { padding: 0 32px; }
+  .landing main { padding-top: 40px; padding-bottom: 72px; }
+
+  /* Vertical rhythm: 144px between sections is too much when the screen is short. */
+  .landing .landing-section { margin-top: 96px; }
+  .landing .landing-section:first-of-type { margin-top: 56px; }
+
+  /* Type: nudge the largest sizes down. */
+  .landing h1 { font-size: clamp(56px, 9vw, 96px); }
+  .landing .section-heading { font-size: clamp(40px, 6vw, 56px); }
+
+  /* Hero: slightly less gap so feed has room. */
+  .landing .hero { gap: 40px; }
+
+  /* Problem box: tighter padding. */
+  .landing .problem { padding: 48px 32px; }
+  .landing .problem__pullquote { font-size: 28px; }
+
+  /* Stat tiles: drop to 2 columns at tablet width. */
+  .landing .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .landing .stat-tile__num { font-size: 56px; }
+
+  /* Compare: stack columns; arrow becomes vertical separator. */
+  .landing .problem__compare { gap: 16px; }
+
+  /* Team: 2-up at tablet width still works. */
+  .landing .team-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+  /* Rate chart: tighter inner padding, drop stats to 2-up. */
+  .landing .rate-chart { padding: 32px 28px 24px; }
+  .landing .rate-chart__stats { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+  /* Pricing: 1-column at tablet width to give each card breathing room. */
+  .landing .pricing-grid { grid-template-columns: 1fr; gap: 24px; }
+  /* Reset desktop's auto-margin trick that aligns features across columns; on mobile each card flows naturally. */
+  .landing .price-card__tagline { margin-top: 24px; }
+  /* Hide ghost placeholders used for desktop column-alignment. */
+  .landing .price-card__strike--ghost,
+  .landing .price-card__price-note--ghost { display: none; }
+
+  /* Offer tiles: 1-column at tablet. */
+  .landing .offer-grid { grid-template-columns: 1fr; gap: 20px; }
+  .landing .offer-tile { padding: 32px 28px; }
+  .landing .offer-tile__num { font-size: 60px; }
+}
+
+/* Phone: full single-column reflow, hide secondary nav, full-width CTAs. */
+@media (max-width: 640px) {
+  .landing .container { padding: 0 20px; }
+  .landing main { padding-top: 32px; padding-bottom: 48px; }
+
+  /* Topbar: shrink wordmark, hide section text-links, keep brand + small CTA. */
+  .landing .topbar { padding: 20px 0 0; }
+  .landing .brand-wordmark { font-size: 24px; }
+  .landing .brand-subtitle { font-size: 9px; letter-spacing: 0.16em; }
+  .landing .topbar-nav { gap: 12px; }
+  .landing .topbar-nav__link { display: none; }
+  .landing .topbar-nav__cta {
+    padding: 12px 16px;
+    font-size: 13px;
+    /* Touch target: ≥44px height (Apple HIG). */
+    min-height: 44px;
+  }
+
+  /* Type: aggressive scale for narrow viewports. */
+  .landing h1 { font-size: 44px; line-height: 1.05; letter-spacing: -0.03em; }
+  .landing .section-heading { font-size: 30px; line-height: 1.1; margin-bottom: 16px; }
+  .landing .section-subhead { font-size: 16px; max-width: none; margin-bottom: 32px; }
+  .landing .section-label { margin-bottom: 20px; }
+
+  /* Sections: shorter rhythm. */
+  .landing .landing-section { margin-top: 72px; }
+  .landing .landing-section:first-of-type { margin-top: 32px; }
+
+  /* Hero: stack vertically, feed below copy. */
+  .landing .hero {
+    flex-direction: column;
+    gap: 32px;
+    align-items: stretch;
+    margin-top: 24px;
+  }
+  .landing .hero__copy,
+  .landing .hero__feed { flex: 1 1 auto; padding-top: 0; }
+  .landing .hero h1 { max-width: none; margin-bottom: 16px; }
+  .landing .hero__brand-line {
+    font-size: 19px;
+    line-height: 1.35;
+    margin-bottom: 16px;
+    max-width: none;
+  }
+  .landing .hero__subhead {
+    font-size: 16px;
+    margin-bottom: 28px;
+    max-width: none;
+  }
+
+  /* Primary CTA: full-width on phone, slightly shorter shadow. */
+  .landing .cta-cluster { flex-direction: column; align-items: stretch; gap: 12px; }
+  .landing .btn-primary {
+    width: 100%;
+    justify-content: center;
+    height: 52px;
+    box-shadow: 0 12px 24px var(--shadow-soft);
+  }
+
+  /* Feed card: action text wraps to its own row so the time/agent stay legible. */
+  .landing .feed-card { padding: 16px; }
+  .landing .feed-card__header { padding-bottom: 12px; margin-bottom: 4px; }
+  .landing .feed-entry {
+    grid-template-columns: 44px auto;
+    grid-template-rows: auto auto;
+    row-gap: 4px;
+    column-gap: 10px;
+    padding: 12px 0;
+  }
+  .landing .feed-entry__action {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .landing .feed-entry__time { font-size: 11px; }
+  .landing .feed-entry__agent { font-size: 14px; }
+  .landing .feed-entry--needs-you { margin: 0 -8px; padding-left: 8px; padding-right: 8px; }
+  .landing .feed-card__footer { font-size: 11px; padding-top: 12px; flex-wrap: wrap; gap: 8px; }
+
+  /* Problem section: tighter padding, smaller pullquote. */
+  .landing .problem { padding: 28px 20px; }
+  .landing .problem__pullquote {
+    font-size: 22px;
+    line-height: 1.25;
+    margin-bottom: 24px;
+  }
+
+  /* Stats: stack 1-column. */
+  .landing .stat-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 24px 0;
+    margin-bottom: 24px;
+  }
+  .landing .stat-tile__num { font-size: 44px; }
+  .landing .stat-tile__label { max-width: none; font-size: 14px; }
+
+  /* Compare: 1-column, arrow rotates to point down between the two stacks. */
+  .landing .problem__compare {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 16px 0 24px;
+  }
+  .landing .problem__compare-col { padding: 20px 20px 14px; }
+  .landing .problem__compare-arrow {
+    /* justify-self: center collapses the 1fr grid cell to character width;
+       without it, transform rotates a 294px-wide layout box into a tall
+       vertical strip that overlaps both boxes. */
+    justify-self: center;
+    align-self: center;
+    transform: rotate(90deg);
+    font-size: 22px;
+    line-height: 1;
+    margin: 8px 0;
+  }
+  .landing .problem__compare-text { font-size: 14px; }
+  .landing .problem__bridge-line { font-size: 18px; margin-top: 16px; }
+
+  /* Pipeline: tighten card padding, shrink agent typography. */
+  .landing .pipeline-intro { margin-top: 56px; font-size: 16px; }
+  .landing .pipeline__step { max-width: 100%; }
+  .landing .pipeline__data { padding: 14px 18px; }
+  .landing .pipeline__data-value { font-size: 14px; }
+  .landing .pipeline__step--agent { padding: 20px; }
+  .landing .pipeline__agent-name { font-size: 18px; line-height: 1.3; }
+  .landing .pipeline__agent-flow { gap: 8px; }
+  .landing .pipeline__step-pill { font-size: 12px; padding: 6px 12px; }
+  .landing .pipeline__step-arrow { font-size: 14px; }
+  .landing .pipeline__step--loop { padding: 20px; }
+  .landing .pipeline__loop-label { font-size: 18px; line-height: 1.3; }
+  .landing .pipeline__loop-detail { font-size: 14px; }
+
+  /* Team grid: 1-column. */
+  .landing .team-grid { grid-template-columns: 1fr; gap: 16px; }
+  .landing .team-detail-card { padding: 28px 24px; gap: 16px; }
+  .landing .team-detail-card__name { font-size: 26px; }
+  .landing .team-detail-card__metric-value { font-size: 30px; }
+
+  /* Rate chart: 1-column stats. */
+  .landing .rate-chart { padding: 24px 16px 20px; }
+  .landing .rate-chart__stats {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+  }
+  .landing .rate-chart__stat-value { font-size: 36px; }
+  .landing .rate-chart__caption { font-size: 12px; margin-top: 16px; }
+
+  /* Pricing: keep 1-col (already from tablet), promote "Recommended" to top of stack. */
+  .landing .price-card { padding: 28px 24px; }
+  .landing .price-card--recommended { order: -1; }
+  .landing .price-card__numeral { font-size: 48px; }
+  .landing .price-card__strike { font-size: 18px; }
+  .landing .price-card__tagline { margin: 20px 0 16px; padding-bottom: 16px; font-size: 16px; }
+
+  /* Offer tiles. */
+  .landing .offer-tile { padding: 28px 24px; }
+  .landing .offer-tile__num { font-size: 52px; }
+  .landing .offer-tile__label { font-size: 13px; }
+
+  /* Trust section: tighter spacing. */
+  .landing .trust__advisors { margin-bottom: 48px; }
+  .landing .trust__discount { font-size: 14px; }
+
+  /* Footer: stack rows so meta lines don't crash into each other. */
+  .landing .landing-footer { margin-top: 80px; padding: 24px 0; }
+  .landing .landing-footer__row {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+}

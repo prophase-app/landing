@@ -429,12 +429,76 @@ body.signup {
 }
 .signup .landing-footer a:hover { color: var(--clay); }
 
-/* ─── Mobile fallback ─── */
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE OPTIMIZATIONS — additive only, desktop unchanged.
+   Two breakpoints: 720px (form stacks) and 480px (phone polish).
+   ═══════════════════════════════════════════════════════════════════ */
+
 @media (max-width: 720px) {
+  body.signup { overflow-x: hidden; }
+
+  .signup .container { padding: 0 24px; }
+
   .signup .signup-grid {
     grid-template-columns: 1fr;
     gap: 32px;
   }
   .signup .signup-card { padding: 28px; }
   .signup .signup-heading { font-size: 44px; }
+  .signup .signup-main { padding: 32px 0 64px; }
+  .signup .signup-hero { margin-bottom: 32px; }
+}
+
+/* Phone: shrink hero, tighten form, prevent iOS input-focus zoom. */
+@media (max-width: 480px) {
+  .signup .container { padding: 0 20px; }
+  .signup .topbar { padding: 20px 0; }
+  .signup .brand-wordmark { font-size: 24px; }
+  .signup .brand-subtitle { font-size: 9px; }
+  .signup .topbar-back { font-size: 13px; }
+
+  .signup .signup-heading { font-size: 32px; line-height: 1.1; }
+  .signup .signup-subhead { font-size: 15px; line-height: 1.5; }
+
+  .signup .signup-card { padding: 20px; }
+  .signup .signup-grid { gap: 24px; }
+  .signup .signup-recap__num { font-size: 32px; }
+  .signup .signup-recap__label { font-size: 12px; letter-spacing: 0.1em; }
+  .signup .signup-recap__detail { font-size: 12px; }
+
+  /* Inputs: 16px font-size prevents iOS Safari from auto-zooming on focus. */
+  .signup input[type="text"],
+  .signup input[type="email"],
+  .signup input[type="url"],
+  .signup textarea {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .signup .signup-form__field { margin-bottom: 16px; }
+  .signup .signup-form__field label,
+  .signup .signup-form__legend { font-size: 13px; }
+
+  /* Submit: full-width on phone for easier thumb reach. */
+  .signup .signup-submit {
+    width: 100%;
+    justify-content: center;
+    height: 52px;
+    font-size: 15px;
+    box-shadow: 0 8px 16px var(--shadow-soft);
+  }
+
+  /* Success state: scale heading down so it fits a single line on most phones. */
+  .signup .signup-success { padding: 28px 8px; }
+  .signup .signup-success__mark { font-size: 48px; margin-bottom: 16px; }
+  .signup .signup-success__heading { font-size: 32px; }
+  .signup .signup-success__detail { font-size: 15px; }
+
+  /* Footer: stack rows. */
+  .signup .landing-footer { margin-top: 48px; padding: 20px 0; }
+  .signup .landing-footer__row {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
 }
