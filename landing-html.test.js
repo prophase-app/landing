@@ -488,3 +488,12 @@ test('renderLandingHtml chart and team-card metrics opt out of generic counter',
   const drivenMetrics = (html.match(/team-detail-card__metric"\s+data-count-driven/g) || []).length;
   assert.equal(drivenMetrics, 3, 'expected all 3 team-card metric blocks to be driven');
 });
+
+test('landing-animations.js wires the hero typewriter', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('runTypewriter'), 'must define runTypewriter');
+  assert.ok(raw.includes('hero-headline'), 'must target the hero-headline class');
+  assert.ok(raw.includes('hero-headline__word'), 'must reveal word spans');
+  assert.ok(raw.includes('hero-headline__cursor'), 'must reveal cursor');
+});

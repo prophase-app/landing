@@ -101,9 +101,40 @@
   // Expose for other modules in this IIFE
   const Counter = { animate: animateCount };
 
+  // ── hero typewriter ─────────────────────────────────────────────────────
+  // Reveal the three H1 word spans in sequence with a ~800ms cadence,
+  // then reveal the blinking cursor. Skipped under reduced motion (all
+  // words and cursor are immediately visible).
+  function runTypewriter() {
+    const h1 = document.querySelector('.hero-headline');
+    if (!h1) return;
+    const words = h1.querySelectorAll('.hero-headline__word');
+    const cursor = h1.querySelector('.hero-headline__cursor');
+
+    if (reduceMotion) {
+      words.forEach((w) => w.classList.add('is-visible'));
+      if (cursor) cursor.classList.add('is-visible');
+      return;
+    }
+
+    const cadence = 800;       // ms between words
+    const leadIn = 200;        // ms before the first word lands
+
+    words.forEach((word, i) => {
+      setTimeout(() => word.classList.add('is-visible'), leadIn + i * cadence);
+    });
+    if (cursor) {
+      setTimeout(
+        () => cursor.classList.add('is-visible'),
+        leadIn + words.length * cadence - cadence + 350
+      );
+    }
+  }
+
   function boot() {
     wireScrollReveal();
     wireCounters();
+    runTypewriter();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
