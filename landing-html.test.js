@@ -470,3 +470,21 @@ test('landing-animations.js IIFE exists and wires reveal observer', () => {
   assert.ok(raw.includes('prefers-reduced-motion'), 'must check prefers-reduced-motion');
   assert.ok(raw.includes("classList.add('is-visible')"), 'must add is-visible class');
 });
+
+test('landing-animations.js exposes counter helpers and wires generic observer', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('animateCount'), 'must define animateCount');
+  assert.ok(raw.includes('easeOutCubic'), 'must define easeOutCubic');
+  assert.ok(raw.includes('data-count-to'), 'must read data-count-to');
+  assert.ok(raw.includes('data-count-template'), 'must read data-count-template');
+  assert.ok(raw.includes('data-count-driven'), 'must skip driven counters');
+});
+
+test('renderLandingHtml chart and team-card metrics opt out of generic counter', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  assert.ok(html.match(/<div\s+class="rate-chart__stats"\s+data-count-driven>/),
+    'chart stats must opt out');
+  const drivenMetrics = (html.match(/team-detail-card__metric"\s+data-count-driven/g) || []).length;
+  assert.equal(drivenMetrics, 3, 'expected all 3 team-card metric blocks to be driven');
+});

@@ -39,10 +39,75 @@
     targets.forEach((el) => io.observe(el));
   }
 
-  // Boot
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', wireScrollReveal);
-  } else {
+  // ── counter animator ────────────────────────────────────────────────────
+  // Elements with data-count-to (and optional data-count-template containing
+  // {n}) animate from 0 to the target value when they enter view. Counters
+  // inside [data-count-driven] containers are skipped here — those are fired
+  // by other modules (chart, feed, team cards) on their own timeline.
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animateCount(el, opts) {
+    opts = opts || {};
+    const to = Number(el.getAttribute('data-count-to'));
+    if (!Number.isFinite(to)) return;
+    const template = el.getAttribute('data-count-template') || '{n}';
+    const duration = opts.duration || 1200;
+    const start = performance.now();
+
+    if (reduceMotion) {
+      el.textContent = template.replace('{n}', String(to));
+      return;
+    }
+
+    function tick(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const v = Math.round(to * easeOutCubic(t));
+      el.textContent = template.replace('{n}', String(v));
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = template.replace('{n}', String(to));
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function wireCounters() {
+    // Counters that are NOT inside a [data-count-driven] container are
+    // driven by section reveal. The driven ones are fired by their owning
+    // module (chart / team cards) on their own timing.
+    const sections = document.querySelectorAll('.landing-section');
+    if (!sections.length) return;
+
+    if (reduceMotion) {
+      document.querySelectorAll('[data-count-to]').forEach((el) => animateCount(el));
+      return;
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const counters = entry.target.querySelectorAll('[data-count-to]');
+        counters.forEach((el) => {
+          if (el.closest('[data-count-driven]')) return; // owned by another module
+          if (el.dataset.counted === '1') return;
+          el.dataset.counted = '1';
+          animateCount(el);
+        });
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    sections.forEach((s) => io.observe(s));
+  }
+
+  // Expose for other modules in this IIFE
+  const Counter = { animate: animateCount };
+
+  function boot() {
     wireScrollReveal();
+    wireCounters();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
 })();
