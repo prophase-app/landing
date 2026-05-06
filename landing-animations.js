@@ -99,78 +99,97 @@
   }
 
   // ── hero typewriter ─────────────────────────────────────────────────────
-  // Reveal the three H1 word spans in sequence with a ~800ms cadence,
-  // then reveal the blinking cursor. Skipped under reduced motion (all
-  // words and cursor are immediately visible).
+  // Type each H1 word letter-by-letter with the cursor following the active
+  // word. Pause between words for a deliberate cadence. Returns the total
+  // duration in ms so the activity feed can wait for the typewriter to land
+  // before it starts. Skipped under reduced motion (all words and cursor
+  // become visible immediately and the function returns 0).
   function runTypewriter() {
     const h1 = document.querySelector('.hero-headline');
-    if (!h1) return;
+    if (!h1) return 0;
     const words = h1.querySelectorAll('.hero-headline__word');
     const cursor = h1.querySelector('.hero-headline__cursor');
 
     if (reduceMotion) {
       words.forEach((w) => w.classList.add('is-visible'));
       if (cursor) cursor.classList.add('is-visible');
-      return;
+      return 0;
     }
 
-    const cadence = 800;       // ms between words
-    const leadIn = 200;        // ms before the first word lands
-
-    words.forEach((word, i) => {
-      setTimeout(() => word.classList.add('is-visible'), leadIn + i * cadence);
+    // Replace each word's text with an empty text node so we can append
+    // characters without disturbing the cursor element. The cursor moves
+    // into whichever word is currently being typed.
+    const targets = Array.from(words).map((w) => w.textContent);
+    const textNodes = Array.from(words).map((w) => {
+      w.textContent = '';
+      const tn = document.createTextNode('');
+      w.appendChild(tn);
+      w.classList.add('is-visible');
+      return tn;
     });
     if (cursor) {
-      setTimeout(
-        () => cursor.classList.add('is-visible'),
-        leadIn + words.length * cadence - cadence + 350
-      );
+      cursor.classList.add('is-visible');
+      words[0].appendChild(cursor);
     }
+
+    const charDelay = 55;       // ms per character
+    const wordPause = 280;      // ms pause between words
+    const leadIn = 200;         // ms before the first character lands
+
+    let t = leadIn;
+    targets.forEach((target, wi) => {
+      setTimeout(() => { if (cursor) words[wi].appendChild(cursor); }, t);
+      for (let ci = 0; ci < target.length; ci++) {
+        const slice = target.slice(0, ci + 1);
+        setTimeout(() => { textNodes[wi].data = slice; }, t);
+        t += charDelay;
+      }
+      t += wordPause;
+    });
+    return t;
   }
 
-  // ── activity feed ───────────────────────────────────────────────────────
-  // Render a simulated overnight orchestration into the hero feed-list.
-  // Eight atomic activities at ~900ms cadence. The most recent line shows a
-  // Braille spinner; when the next line lands, the previous spinner is
-  // removed (so the previous step reads as "completed"). The footer counter
-  // ticks up as each entry lands. Plays once on page load.
+  // ── hero demo (button → click → loading → panel → entries → success) ───
+  // Choreographed sequence in the upper-right hero slot. Plays once, after
+  // the typewriter completes. Each entry runs its own spinner before
+  // transitioning to a green-check Done state. After the final entry, a
+  // success badge fades in below the panel.
 
   const FEED_ENTRIES = [
-    { time: '02:14', agent: 'hunter',     label: 'Hunter',     msg: 'Searching new job listings' },
-    { time: '02:14', agent: 'hunter',     label: 'Hunter',     msg: 'Found 5 strong-fit roles' },
-    { time: '02:31', agent: 'strategist', label: 'Strategist', msg: 'Picked: Senior PM at Linear' },
-    { time: '02:33', agent: 'strategist', label: 'Strategist', msg: 'Reading the job post' },
-    { time: '02:47', agent: 'strategist', label: 'Strategist', msg: 'Drafting a tailored cover letter' },
-    { time: '03:02', agent: 'applier',    label: 'Applier',    msg: 'Filling in the application' },
-    { time: '03:05', agent: 'applier',    label: 'Applier',    msg: 'Uploading resume and cover letter' },
-    { time: '03:08', agent: 'applier',    label: 'Applier',    msg: 'Submitted \u2014 tracker updated' },
+    { agent: 'hunter',     label: 'Hunter',     msg: 'Searching new job listings' },
+    { agent: 'hunter',     label: 'Hunter',     msg: 'Ranking 5 strong-fit roles' },
+    { agent: 'strategist', label: 'Strategist', msg: 'Selecting Senior PM at Linear' },
+    { agent: 'strategist', label: 'Strategist', msg: 'Reading the job post' },
+    { agent: 'strategist', label: 'Strategist', msg: 'Tailoring your cover letter' },
+    { agent: 'applier',    label: 'Applier',    msg: 'Filling in the application' },
+    { agent: 'applier',    label: 'Applier',    msg: 'Uploading resume and cover letter' },
+    { agent: 'applier',    label: 'Applier',    msg: 'Submitting application' },
   ];
 
   const SPINNER_FRAMES = ['\u280B', '\u2819', '\u2839', '\u2838', '\u283C', '\u2834', '\u2826', '\u2827', '\u2807', '\u280F'];
   // Braille dots: ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
 
-  function buildFeedEntry(entry, withSpinner) {
+  function buildFeedEntry(entry, finalState) {
     const li = document.createElement('li');
     li.className = 'feed-entry';
-    const time = document.createElement('span');
-    time.className = 'feed-entry__time';
-    time.textContent = entry.time;
     const agent = document.createElement('span');
     agent.className = 'feed-entry__agent feed-entry__agent--' + entry.agent;
     agent.textContent = entry.label;
     const action = document.createElement('span');
     action.className = 'feed-entry__action';
     action.textContent = entry.msg;
-    li.appendChild(time);
+    const status = document.createElement('span');
+    if (finalState) {
+      status.className = 'feed-entry__status feed-entry__status--done';
+      status.innerHTML = '<span class="feed-entry__check" aria-hidden="true">\u2713</span><span>Done</span>';
+    } else {
+      status.className = 'feed-entry__status feed-entry__status--spinning';
+      status.setAttribute('aria-hidden', 'true');
+      status.textContent = SPINNER_FRAMES[0];
+    }
     li.appendChild(agent);
     li.appendChild(action);
-    if (withSpinner) {
-      const spin = document.createElement('span');
-      spin.className = 'feed-entry__spinner';
-      spin.setAttribute('aria-hidden', 'true');
-      spin.textContent = SPINNER_FRAMES[0];
-      action.appendChild(spin);
-    }
+    li.appendChild(status);
     return li;
   }
 
@@ -183,66 +202,126 @@
     return id;
   }
 
-  function runActivityFeed() {
-    // Fires unconditionally on boot rather than gated on hero IntersectionObserver.
-    // The hero is always in the viewport on first paint at every supported viewport,
-    // so a gate would add code without changing observed behavior.
+  function setEntryDone(li) {
+    const status = li.querySelector('.feed-entry__status');
+    if (!status) return;
+    status.className = 'feed-entry__status feed-entry__status--done';
+    status.removeAttribute('aria-hidden');
+    status.innerHTML = '<span class="feed-entry__check" aria-hidden="true">\u2713</span><span>Done</span>';
+  }
+
+  function runActivityFeed(externalLeadIn) {
+    // Drives the upper-right hero slot end to end:
+    //  1. button visible (initial state — present in markup)
+    //  2. typewriter completes → +1s pause
+    //  3. button click animation → loading state ("Deploying your AI career team")
+    //  4. button vanishes; feed-card spawns
+    //  5. each entry: appears with spinner → ~850ms later transitions to ✓ Done
+    //  6. success badge fades in below the panel
+    const button = document.querySelector('[data-hero-demo]');
+    const buttonLabel = button && button.querySelector('[data-hero-demo-label]');
+    const buttonSpinner = button && button.querySelector('[data-hero-demo-spinner]');
+    const panel = document.querySelector('[data-feed-panel]');
     const list = document.querySelector('.feed-list');
-    const counter = document.querySelector('[data-feed-count]');
+    const success = document.querySelector('[data-hero-success]');
     if (!list) return;
 
     if (reduceMotion) {
+      // Snap straight to the final state: no button, panel + entries + success.
+      if (button) button.setAttribute('hidden', '');
+      if (panel) panel.removeAttribute('hidden');
       FEED_ENTRIES.forEach((entry) => {
-        const li = buildFeedEntry(entry, false);
+        const li = buildFeedEntry(entry, /*finalState*/ true);
         li.classList.add('is-visible');
         list.appendChild(li);
       });
-      if (counter) counter.textContent = FEED_ENTRIES.length + ' actions overnight';
+      if (success) {
+        success.removeAttribute('hidden');
+        success.classList.add('is-visible');
+      }
       return;
     }
 
-    const cadence = 900;
-    const leadIn = 600; // give the page a beat after first paint
+    const baseLead = (typeof externalLeadIn === 'number' && externalLeadIn > 0)
+      ? externalLeadIn
+      : 600;
+    const POST_TYPE_PAUSE   = 1000;  // beat after H1 lands before button "clicks"
+    const CLICK_ANIM_MS     = 320;
+    const LOADING_MS        = 1800;  // "Deploying your AI career team" lingers
+    const VANISH_MS         = 280;
+    const SPAWN_MS          = 380;
+    const SPINNER_DUR       = 1350;  // each entry spinner runs this long
+    const ENTRY_GAP         = 280;   // gap between one entry's "Done" and the next entry appearing
+    const SUCCESS_DELAY     = 500;   // delay after last entry's Done before success badge
 
-    let prevSpinnerInterval = null;
-    let prevAction = null;
+    const t0 = baseLead + POST_TYPE_PAUSE;
 
+    // 1. Click animation
+    setTimeout(() => {
+      if (button) button.classList.add('is-clicked');
+    }, t0);
+
+    // 2. After click animation finishes: enter loading state, swap text, spin
+    let buttonSpinId = null;
+    setTimeout(() => {
+      if (!button) return;
+      button.classList.remove('is-clicked');
+      button.classList.add('is-loading');
+      if (buttonLabel) buttonLabel.textContent = 'Deploying your AI career team';
+      if (buttonSpinner) {
+        buttonSpinner.textContent = SPINNER_FRAMES[0];
+        buttonSpinId = spinSpinner(buttonSpinner);
+      }
+    }, t0 + CLICK_ANIM_MS);
+
+    // 3. After loading: vanish the button
+    const vanishAt = t0 + CLICK_ANIM_MS + LOADING_MS;
+    setTimeout(() => {
+      if (button) button.classList.add('is-vanishing');
+    }, vanishAt);
+
+    // 4. After vanish: spawn the panel
+    const spawnAt = vanishAt + VANISH_MS;
+    setTimeout(() => {
+      if (buttonSpinId !== null) clearInterval(buttonSpinId);
+      if (button) button.setAttribute('hidden', '');
+      if (!panel) return;
+      panel.removeAttribute('hidden');
+      panel.classList.add('is-spawning');
+      // eslint-disable-next-line no-unused-expressions
+      panel.offsetWidth; // force reflow so the spawn transition fires
+      panel.classList.add('is-spawned');
+    }, spawnAt);
+
+    // 5. Cascade entries, each running its own spinner → Done cycle
+    const perEntry = SPINNER_DUR + ENTRY_GAP;
+    const entriesStart = spawnAt + SPAWN_MS;
     FEED_ENTRIES.forEach((entry, i) => {
-      const isLast = i === FEED_ENTRIES.length - 1;
+      const entryAppearAt = entriesStart + i * perEntry;
       setTimeout(() => {
-        // Stop spinner on the previous entry (now "completed")
-        if (prevSpinnerInterval !== null) {
-          clearInterval(prevSpinnerInterval);
-          prevSpinnerInterval = null;
-        }
-        if (prevAction) {
-          const oldSpinner = prevAction.querySelector('.feed-entry__spinner');
-          if (oldSpinner) oldSpinner.remove();
-        }
-
-        // Append the new entry
-        const li = buildFeedEntry(entry, !isLast);
+        const li = buildFeedEntry(entry, false);
         list.appendChild(li);
-        // Force-reflow trick: read offsetWidth so the browser commits the
-        // initial style (opacity:0, transform:translateY(6px)) BEFORE we add
-        // .is-visible. Without this read the two states coalesce into one
-        // frame and the CSS transition is skipped entirely.
         // eslint-disable-next-line no-unused-expressions
         li.offsetWidth;
         li.classList.add('is-visible');
-
-        // Wire spinner if this isn't the terminal step
-        if (!isLast) {
-          const spinEl = li.querySelector('.feed-entry__spinner');
-          if (spinEl) prevSpinnerInterval = spinSpinner(spinEl);
-          prevAction = li.querySelector('.feed-entry__action');
-        }
-
-        // Tick the footer counter
-        if (counter) counter.textContent = (i + 1) + ' actions';
-        if (isLast && counter) counter.textContent = FEED_ENTRIES.length + ' actions overnight';
-      }, leadIn + i * cadence);
+        const status = li.querySelector('.feed-entry__status');
+        const spinId = status ? spinSpinner(status) : null;
+        setTimeout(() => {
+          if (spinId !== null) clearInterval(spinId);
+          setEntryDone(li);
+        }, SPINNER_DUR);
+      }, entryAppearAt);
     });
+
+    // 6. Success badge after the last entry's Done state lands
+    const lastEntryDoneAt = entriesStart + (FEED_ENTRIES.length - 1) * perEntry + SPINNER_DUR;
+    setTimeout(() => {
+      if (!success) return;
+      success.removeAttribute('hidden');
+      // eslint-disable-next-line no-unused-expressions
+      success.offsetWidth;
+      success.classList.add('is-visible');
+    }, lastEntryDoneAt + SUCCESS_DELAY);
   }
 
   // ── rate chart ──────────────────────────────────────────────────────────
@@ -338,8 +417,10 @@
   function boot() {
     wireScrollReveal();
     wireCounters();
-    runTypewriter();
-    runActivityFeed();
+    // Sequence: typewriter first, then the activity feed picks up where
+    // the H1 lands. +200ms breath after the typewriter completes.
+    const typewriterDur = runTypewriter() || 0;
+    runActivityFeed(typewriterDur + 200);
     runChart();
     runTeamCardCounters();
   }

@@ -88,7 +88,11 @@
     </div>
 
     <aside class="hero__feed" aria-label="Live agent activity">
-      <div class="feed-card">
+      <a class="hero-cta-demo" href="/early-access" data-hero-demo data-cta-surface="hero-demo">
+        <span class="hero-cta-demo__spinner" data-hero-demo-spinner aria-hidden="true"></span>
+        <span class="hero-cta-demo__label" data-hero-demo-label>Start applying together</span>
+      </a>
+      <div class="feed-card" data-feed-panel hidden>
         <div class="feed-card__header">
           <span class="live-indicator">
             <span class="live-dot" aria-hidden="true"></span>
@@ -97,10 +101,10 @@
           <span class="feed-card__title">Your team, working</span>
         </div>
         <ul class="feed-list"></ul>
-        <div class="feed-card__footer">
-          <span>While you slept, your team worked.</span>
-          <span class="feed-card__count" data-feed-count>0 actions</span>
-        </div>
+      </div>
+      <div class="hero-feed__success" data-hero-success hidden>
+        <span class="hero-feed__success-icon" aria-hidden="true">&#10003;</span>
+        <span>Job application successfully submitted</span>
       </div>
     </aside>
   </section>

@@ -387,27 +387,38 @@ test('renderLandingHtml hero H1 uses typewriter spans with aria-label fallback',
   assert.ok(!html.match(/Don&rsquo;t apply<br>alone\./), 'old H1 markup must be replaced');
 });
 
-test('renderLandingHtml hero activity feed list is empty (entries injected by JS)', () => {
+test('renderLandingHtml hero feed has demo button + hidden panel + hidden success badge', () => {
   const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
-  // The <ul class="feed-list"> must exist but contain no <li> children in source HTML.
-  // The JS module appends entries at runtime.
+  // The CTA button is the initial state of the upper-right slot.
+  assert.ok(html.match(/<a[^>]*class="hero-cta-demo"[^>]*href="\/early-access"[^>]*data-hero-demo[^>]*>/),
+    'expected "Start applying together" CTA <a> with data-hero-demo and href to /early-access');
+  assert.ok(html.includes('Start applying together'), 'expected initial button label');
+  assert.ok(html.includes('data-hero-demo-label'), 'expected swappable label span');
+  assert.ok(html.includes('data-hero-demo-spinner'), 'expected loading-state spinner span');
+  // Feed-card panel must exist but start hidden — JS reveals it after the button "clicks".
+  assert.ok(html.match(/<div\s+class="feed-card"[^>]*data-feed-panel[^>]*hidden\b/),
+    'expected feed-card with data-feed-panel and hidden attribute');
+  // <ul> stays empty in source HTML; entries are JS-driven.
   const ulMatch = html.match(/<ul\s+class="feed-list"[^>]*>([\s\S]*?)<\/ul>/);
   assert.ok(ulMatch, 'expected feed-list <ul>');
   assert.ok(!ulMatch[1].includes('<li'), 'feed-list must be empty in source HTML');
-  // Region labeling is on the parent <aside aria-label>; the <ul> itself does NOT
-  // get aria-live, otherwise screen readers queue 8 announcements at page load.
   assert.ok(!ulMatch[0].includes('aria-live'), 'feed-list must not declare aria-live');
+  // Success badge is present but hidden until the demo finishes.
+  assert.ok(html.match(/data-hero-success[^>]*hidden\b/), 'expected hidden success badge');
+  assert.ok(html.includes('Job application successfully submitted'), 'success badge copy');
+  // Region labeling is on the parent <aside>.
   assert.ok(html.match(/<aside[^>]*class="hero__feed"[^>]*aria-label="Live agent activity"/),
     'parent aside must carry the region aria-label');
-  // Title and footer reframe to "working" tense
-  assert.ok(html.includes('Your team, working'), 'expected new "working" title');
-  assert.ok(html.match(/feed-card__count[^>]*>0 actions</), 'footer counter must start at 0');
-  // Old hard-coded entries must be gone
+  // Title stays in "working" tense; legacy footer/copy gone.
+  assert.ok(html.includes('Your team, working'), 'expected "working" title');
+  assert.ok(!html.includes('feed-card__footer'), 'feed footer must be removed');
+  assert.ok(!html.includes('While you slept'), 'old "while you slept" framing must be gone');
+  assert.ok(!html.includes('actions overnight'), 'no overnight-count copy');
+  // Old hard-coded entries must be gone.
   assert.ok(!html.includes('Found a strong match'), 'old hardcoded entry must be gone');
   assert.ok(!html.includes('Filtered out 14 roles'), 'old hardcoded entry must be gone');
   assert.ok(!html.includes('Submitted via Greenhouse'), 'old hardcoded entry must be gone');
   assert.ok(!html.includes('Needs your input'), 'old hardcoded entry must be gone');
-  assert.ok(!html.includes('6 actions overnight'), 'old static count must be gone');
 });
 
 test('renderLandingHtml numeric tiles carry data-count-to attributes', () => {
@@ -493,39 +504,59 @@ test('renderLandingHtml chart and team-card metrics opt out of generic counter',
   assert.equal(drivenMetrics, 3, 'expected all 3 team-card metric blocks to be driven');
 });
 
-test('landing-animations.js wires the hero typewriter', () => {
+test('landing-animations.js wires the letter-by-letter hero typewriter', () => {
   const path = require('path');
   const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
   assert.ok(raw.includes('runTypewriter'), 'must define runTypewriter');
   assert.ok(raw.includes('hero-headline'), 'must target the hero-headline class');
   assert.ok(raw.includes('hero-headline__word'), 'must reveal word spans');
   assert.ok(raw.includes('hero-headline__cursor'), 'must reveal cursor');
+  // Letter-by-letter typing: characters are appended to a text node
+  assert.ok(raw.includes('createTextNode'), 'must use a text node so the cursor can sit alongside');
+  assert.ok(raw.includes('charDelay'),      'must define a per-character delay');
+  // Must return a duration so boot() can chain the activity feed
+  assert.ok(raw.match(/return\s+t;/),       'runTypewriter must return its total duration');
 });
 
-test('landing-animations.js seeds the activity feed with 8 atomic entries', () => {
+test('landing-animations.js drives the hero demo: button click → loading → panel → entries → success', () => {
   const path = require('path');
   const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
   assert.ok(raw.includes('FEED_ENTRIES'), 'must define a FEED_ENTRIES array');
+  // The 3 agents are present
   assert.ok(raw.includes("'Hunter'"),     'feed must have a Hunter entry');
   assert.ok(raw.includes("'Strategist'"), 'feed must have a Strategist entry');
   assert.ok(raw.includes("'Applier'"),    'feed must have an Applier entry');
-  // Atomic, accessible language — every line is a single small action
-  assert.ok(raw.includes('Searching new job listings'),  'Hunter step 1');
-  assert.ok(raw.includes('Found 5 strong-fit roles'),    'Hunter step 2');
-  assert.ok(raw.includes('Picked: Senior PM at Linear'), 'Strategist step 1');
-  assert.ok(raw.includes('Reading the job post'),        'Strategist step 2');
-  assert.ok(raw.includes('Drafting a tailored cover letter'), 'Strategist step 3');
-  assert.ok(raw.includes('Filling in the application'),  'Applier step 1');
+  // The init "System" entry was removed — the button now carries the deploy moment
+  assert.ok(!raw.match(/label:\s*'System'/), 'no System feed entry; button covers deploy');
+  // Atomic, action-voiced messages
+  assert.ok(raw.includes('Searching new job listings'),     'Hunter step 1');
+  assert.ok(raw.includes('Ranking 5 strong-fit roles'),     'Hunter step 2');
+  assert.ok(raw.includes('Selecting Senior PM at Linear'),  'Strategist step 1');
+  assert.ok(raw.includes('Reading the job post'),           'Strategist step 2');
+  assert.ok(raw.includes('Tailoring your cover letter'),    'Strategist step 3');
+  assert.ok(raw.includes('Filling in the application'),     'Applier step 1');
   assert.ok(raw.includes('Uploading resume and cover letter'), 'Applier step 2');
-  assert.ok(raw.includes('Submitted'),                   'Applier step 3 (terminal)');
-  // Negative coverage: must use short agent names, not "Job X" forms
+  assert.ok(raw.includes('Submitting application'),         'Applier step 3 (terminal)');
+  // Negative: short agent names; no overnight footer copy
   assert.ok(!raw.includes("'Job Hunter'"),     'feed must use "Hunter", not "Job Hunter"');
   assert.ok(!raw.includes("'Job Strategist'"), 'feed must use "Strategist", not "Job Strategist"');
   assert.ok(!raw.includes("'Job Applier'"),    'feed must use "Applier", not "Job Applier"');
-  // The footer counter is updated by the JS, not the HTML
-  assert.ok(raw.includes('data-feed-count'),             'must update footer counter');
-  // Spinner frames present
-  assert.ok(raw.includes('SPINNER_FRAMES'),              'must define spinner frames');
+  assert.ok(!raw.includes('data-feed-count'),  'JS must not touch the removed footer counter');
+  assert.ok(!raw.includes('actions overnight'), 'no "actions overnight" copy in JS');
+  // Hero demo orchestration sentinels
+  assert.ok(raw.includes("'Deploying your AI career team'"), 'button loading-state copy');
+  assert.ok(raw.includes("classList.add('is-clicked')"),     'button click animation');
+  assert.ok(raw.includes("classList.add('is-loading')"),     'button loading state');
+  assert.ok(raw.includes("classList.add('is-vanishing')"),   'button vanish');
+  assert.ok(raw.includes("classList.add('is-spawning')"),    'panel spawn class');
+  assert.ok(raw.includes("classList.add('is-spawned')"),     'panel spawn final class');
+  assert.ok(raw.includes('setEntryDone'),                    'per-entry done transition');
+  assert.ok(raw.includes('feed-entry__status--done'),        'done state class');
+  assert.ok(raw.includes('feed-entry__check'),               'check icon');
+  assert.ok(raw.includes('data-hero-success'),               'success badge selector');
+  assert.ok(raw.includes('SPINNER_FRAMES'),                  'must define spinner frames');
+  // Typewriter handoff
+  assert.ok(raw.includes('runActivityFeed(typewriterDur'),   'boot must chain feed after typewriter');
 });
 
 test('landing.html chart SVG has class hooks for animation', () => {
