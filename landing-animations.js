@@ -223,7 +223,10 @@
         // Append the new entry
         const li = buildFeedEntry(entry, !isLast);
         list.appendChild(li);
-        // Force reflow so the transition kicks in
+        // Force-reflow trick: read offsetWidth so the browser commits the
+        // initial style (opacity:0, transform:translateY(6px)) BEFORE we add
+        // .is-visible. Without this read the two states coalesce into one
+        // frame and the CSS transition is skipped entirely.
         // eslint-disable-next-line no-unused-expressions
         li.offsetWidth;
         li.classList.add('is-visible');
