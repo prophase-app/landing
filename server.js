@@ -140,10 +140,11 @@ function handleEarlyAccessSubmit(req, res) {
   });
 }
 
-const STATIC_CSS = {
-  '/landing.css':        'landing.css',
-  '/landing-tokens.css': 'landing-tokens.css',
-  '/early-access.css':   'early-access.css',
+const STATIC_ASSETS = {
+  '/landing.css':           { file: 'landing.css',           type: 'text/css; charset=utf-8' },
+  '/landing-tokens.css':    { file: 'landing-tokens.css',    type: 'text/css; charset=utf-8' },
+  '/early-access.css':      { file: 'early-access.css',      type: 'text/css; charset=utf-8' },
+  '/landing-animations.js': { file: 'landing-animations.js', type: 'application/javascript; charset=utf-8' },
 };
 
 function handler(req, res) {
@@ -157,8 +158,9 @@ function handler(req, res) {
   if (req.method === 'GET' && urlPath === '/early-access') {
     return send(res, 200, renderEarlyAccessHtml(BRAND, POSTHOG), 'text/html; charset=utf-8');
   }
-  if (req.method === 'GET' && STATIC_CSS[urlPath]) {
-    return serveStatic(res, path.join(__dirname, STATIC_CSS[urlPath]), 'text/css; charset=utf-8');
+  if (req.method === 'GET' && STATIC_ASSETS[urlPath]) {
+    const asset = STATIC_ASSETS[urlPath];
+    return serveStatic(res, path.join(__dirname, asset.file), asset.type);
   }
   if (req.method === 'POST' && urlPath === '/api/early-access') {
     return handleEarlyAccessSubmit(req, res);

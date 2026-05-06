@@ -50,13 +50,19 @@ test('GET /early-access returns 200 + form HTML', async () => {
   } finally { server.close(); }
 });
 
-test('GET landing CSS files return 200 + text/css', async () => {
+test('GET landing static assets return 200 + correct content-type', async () => {
   const { server, port } = await startServer();
   try {
-    for (const p of ['/landing.css', '/landing-tokens.css', '/early-access.css']) {
+    const cases = [
+      { path: '/landing.css',           type: /text\/css/ },
+      { path: '/landing-tokens.css',    type: /text\/css/ },
+      { path: '/early-access.css',      type: /text\/css/ },
+      { path: '/landing-animations.js', type: /application\/javascript/ },
+    ];
+    for (const { path: p, type } of cases) {
       const res = await fetchPath(port, p);
       assert.equal(res.status, 200, p + ' should be 200');
-      assert.match(res.headers.get('content-type') || '', /text\/css/, p + ' content-type');
+      assert.match(res.headers.get('content-type') || '', type, p + ' content-type');
     }
   } finally { server.close(); }
 });

@@ -19,8 +19,11 @@ test('renderLandingHtml substitutes BRAND_TAGLINE globally', () => {
 
 test('renderLandingHtml output contains hero copy with AI-by-your-side framing', () => {
   const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
-  assert.ok(html.includes('Don&rsquo;t apply') && html.includes('alone.'), 'expected H1 hero copy split across two lines');
-  assert.ok(html.match(/Don&rsquo;t apply<br>alone\./), 'expected explicit line break for the H1 wrap');
+  assert.ok(html.includes('Don&rsquo;t') && html.includes('apply') && html.includes('alone.'),
+    'expected H1 hero words present');
+  assert.ok(html.includes('hero-headline__word'), 'expected new typewriter span markup');
+  // Old single-line markup must NOT match
+  assert.ok(!html.match(/Don&rsquo;t apply<br>alone\./), 'old H1 markup must be gone');
   assert.ok(html.includes('Three AI specialists'), 'expected AI-specialists framing in subhead');
   assert.ok(html.includes('by your side'), 'expected by-your-side framing (replaces leverage)');
   assert.ok(html.includes('Your AI in an AI-driven job market'), 'expected AI-shield context line');
@@ -52,32 +55,14 @@ test('renderLandingHtml output contains the three job-forward agents', () => {
   assert.ok(!html.includes('Operator'), 'Operator must not appear (renamed to Job Applier)');
 });
 
-test('renderLandingHtml hero contains live agent activity feed (value-forward)', () => {
+test('renderLandingHtml hero contains live agent activity feed shell', () => {
   const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
   assert.ok(html.includes('feed-card'), 'expected feed-card container');
   assert.ok(html.includes('LIVE'), 'expected LIVE indicator');
-  assert.ok(html.includes('Found a strong match'), 'expected match-finding entry');
-  assert.ok(html.includes('Filtered out'), 'expected filtering entry');
-  assert.ok(html.includes('Submitted via Greenhouse'), 'expected submission entry');
-  assert.ok(html.includes('Needs your input'), 'expected next-action entry');
+  assert.ok(html.includes('feed-list'), 'expected feed-list ul');
+  assert.ok(html.includes('Your team, working'), 'expected working-tense title');
 });
 
-test('renderLandingHtml activity feed uses short agent names without "Job" prefix', () => {
-  // The feed is a tight context where the role is repeated 6 times; the user
-  // asked us to drop the "Job" prefix here. The full names ("Job Hunter" etc.)
-  // are still used in the pipeline section and team cards for formal framing.
-  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
-  const feedMatch = html.match(/<aside[^>]*class="hero__feed"[\s\S]*?<\/aside>/);
-  assert.ok(feedMatch, 'expected hero feed aside');
-  const feedHtml = feedMatch[0];
-  assert.ok(!feedHtml.includes('Job Hunter'), 'feed must use "Hunter" not "Job Hunter"');
-  assert.ok(!feedHtml.includes('Job Strategist'), 'feed must use "Strategist" not "Job Strategist"');
-  assert.ok(!feedHtml.includes('Job Applier'), 'feed must use "Applier" not "Job Applier"');
-  // The short names should still be present
-  assert.ok(feedHtml.includes('>Hunter<'), 'feed must contain "Hunter"');
-  assert.ok(feedHtml.includes('>Strategist<'), 'feed must contain "Strategist"');
-  assert.ok(feedHtml.includes('>Applier<'), 'feed must contain "Applier"');
-});
 
 test('renderLandingHtml problem section uses AI-on-your-side framing, not "leverage"', () => {
   const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
@@ -378,4 +363,186 @@ test('landing.html source contains template tokens (single-source-of-truth)', ()
   assert.ok(!raw.includes('Prophase'), 'landing.html must not hardcode current brand "Prophase"');
   assert.ok(!raw.includes('ProPhase'), 'landing.html must not hardcode legacy "ProPhase" capitalization');
   assert.ok(!raw.includes('CareerOS'), 'landing.html must not hardcode legacy "CareerOS"');
+});
+
+test('renderLandingHtml loads the animation script', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  assert.ok(
+    html.match(/<script\s+defer\s+src="\/landing-animations\.js"><\/script>/),
+    'expected deferred <script> tag for landing-animations.js'
+  );
+});
+
+test('renderLandingHtml hero H1 uses typewriter spans with aria-label fallback', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  // The visible text is split into three word spans, each aria-hidden, with a cursor element.
+  // The H1 itself carries an aria-label so screen readers get the phrase intact.
+  assert.ok(html.match(/<h1[^>]*id="hero-heading"[^>]*aria-label="Don['\u2019]t apply alone\."/),
+    'H1 must carry the full phrase via aria-label');
+  assert.ok(html.includes('class="hero-headline__word" data-word="0"'), 'expected word 0 span');
+  assert.ok(html.includes('class="hero-headline__word" data-word="1"'), 'expected word 1 span');
+  assert.ok(html.includes('class="hero-headline__word" data-word="2"'), 'expected word 2 span');
+  assert.ok(html.includes('hero-headline__cursor'), 'expected cursor span');
+  // The old single-line markup must be gone
+  assert.ok(!html.match(/Don&rsquo;t apply<br>alone\./), 'old H1 markup must be replaced');
+});
+
+test('renderLandingHtml hero activity feed list is empty (entries injected by JS)', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  // The <ul class="feed-list"> must exist but contain no <li> children in source HTML.
+  // The JS module appends entries at runtime.
+  const ulMatch = html.match(/<ul\s+class="feed-list"[^>]*>([\s\S]*?)<\/ul>/);
+  assert.ok(ulMatch, 'expected feed-list <ul>');
+  assert.ok(!ulMatch[1].includes('<li'), 'feed-list must be empty in source HTML');
+  // Region labeling is on the parent <aside aria-label>; the <ul> itself does NOT
+  // get aria-live, otherwise screen readers queue 8 announcements at page load.
+  assert.ok(!ulMatch[0].includes('aria-live'), 'feed-list must not declare aria-live');
+  assert.ok(html.match(/<aside[^>]*class="hero__feed"[^>]*aria-label="Live agent activity"/),
+    'parent aside must carry the region aria-label');
+  // Title and footer reframe to "working" tense
+  assert.ok(html.includes('Your team, working'), 'expected new "working" title');
+  assert.ok(html.match(/feed-card__count[^>]*>0 actions</), 'footer counter must start at 0');
+  // Old hard-coded entries must be gone
+  assert.ok(!html.includes('Found a strong match'), 'old hardcoded entry must be gone');
+  assert.ok(!html.includes('Filtered out 14 roles'), 'old hardcoded entry must be gone');
+  assert.ok(!html.includes('Submitted via Greenhouse'), 'old hardcoded entry must be gone');
+  assert.ok(!html.includes('Needs your input'), 'old hardcoded entry must be gone');
+  assert.ok(!html.includes('6 actions overnight'), 'old static count must be gone');
+});
+
+test('renderLandingHtml numeric tiles carry data-count-to attributes', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  // Problem stats
+  assert.ok(html.match(/data-count-to="87"[^>]*>87%</), '87% stat tile');
+  assert.ok(html.match(/data-count-to="10"[^>]*data-count-template="&lt;\{n\}%"[^>]*>&lt;10%</),
+    '<10% stat tile with template');
+  assert.ok(html.match(/data-count-to="300"[^>]*data-count-template="\{n\}:1"[^>]*>300:1</),
+    '300:1 stat tile with template');
+  // Team card metrics
+  assert.ok(html.match(/data-count-to="470"[^>]*>470</), 'Hunter metric');
+  assert.ok(html.match(/data-count-to="120"[^>]*>120</), 'Strategist metric');
+  assert.ok(html.match(/data-count-to="80"[^>]*>80</), 'Applier metric');
+  // Chart top stats
+  assert.ok(html.match(/data-count-to="840"[^>]*>840</), '840 applications');
+  assert.ok(html.match(/data-count-to="45"[^>]*>45</), '45 interviews');
+  assert.ok(html.match(/data-count-to="5"[^>]*data-count-template="\{n\}%"[^>]*>5%</),
+    '5% conversion');
+  // Offer tiles
+  assert.ok(html.match(/data-count-to="2"[^>]*>2</), '2 weeks');
+  assert.ok(html.match(/data-count-to="20"[^>]*data-count-template="\{n\}%"[^>]*>20%</),
+    '20% off');
+  // Pricing dollar amounts (wrapped in spans inside .price-card__numeral)
+  assert.ok(html.match(/data-count-to="40"[^>]*data-count-template="\$\{n\}"[^>]*>\$40</),
+    '$40 standard');
+  assert.ok(html.match(/data-count-to="160"[^>]*data-count-template="\$\{n\}"[^>]*>\$160</),
+    '$160 premium');
+});
+
+test('renderLandingHtml sections carry .reveal class for scroll-reveal', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  // Each landing-section gets a reveal class so the IntersectionObserver picks it up.
+  // Hero section is exempt because it's above-the-fold and shouldn't fade in.
+  const sectionRegex = /<section[^>]*class="landing-section[^"]*"/g;
+  const matches = html.match(sectionRegex) || [];
+  assert.ok(matches.length >= 5, `expected at least 5 landing-section elements, got ${matches.length}`);
+  for (const m of matches) {
+    if (m.includes('hero')) continue; // hero is exempt
+    assert.ok(m.includes('reveal'), `section without reveal class: ${m}`);
+  }
+});
+
+test('renderLandingHtml grids carry .stagger-reveal with .reveal children', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  // Each grid gets stagger-reveal; each direct child gets reveal so the
+  // nth-child transition-delay rules in landing.css fire as designed.
+  assert.ok(html.match(/class="stat-grid stagger-reveal"/),    'stat-grid must be stagger-reveal');
+  assert.ok(html.match(/class="team-grid stagger-reveal"/),    'team-grid must be stagger-reveal');
+  assert.ok(html.match(/class="pricing-grid stagger-reveal"/), 'pricing-grid must be stagger-reveal');
+  assert.ok(html.match(/class="offer-grid stagger-reveal"/),   'offer-grid must be stagger-reveal');
+  // Children: at least 3 stat-tiles, 3 team cards, 3 price cards, 3 offer tiles, all with reveal
+  assert.ok((html.match(/class="stat-tile reveal"/g)        || []).length >= 3, 'stat tiles need reveal');
+  assert.ok((html.match(/class="team-detail-card reveal"/g) || []).length >= 3, 'team cards need reveal');
+  assert.ok((html.match(/class="price-card[^"]*reveal"/g)   || []).length >= 3, 'price cards need reveal');
+  assert.ok((html.match(/class="offer-tile[^"]*reveal"/g)   || []).length >= 3, 'offer tiles need reveal');
+});
+
+test('landing-animations.js IIFE exists and wires reveal observer', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.startsWith("'use strict'"), 'must be strict mode');
+  assert.ok(raw.includes('IntersectionObserver'), 'must use IntersectionObserver for reveal');
+  assert.ok(raw.includes('prefers-reduced-motion'), 'must check prefers-reduced-motion');
+  assert.ok(raw.includes("classList.add('is-visible')"), 'must add is-visible class');
+});
+
+test('landing-animations.js exposes counter helpers and wires generic observer', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('animateCount'), 'must define animateCount');
+  assert.ok(raw.includes('easeOutCubic'), 'must define easeOutCubic');
+  assert.ok(raw.includes('data-count-to'), 'must read data-count-to');
+  assert.ok(raw.includes('data-count-template'), 'must read data-count-template');
+  assert.ok(raw.includes('data-count-driven'), 'must skip driven counters');
+});
+
+test('renderLandingHtml chart and team-card metrics opt out of generic counter', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  assert.ok(html.match(/<div\s+class="rate-chart__stats"\s+data-count-driven>/),
+    'chart stats must opt out');
+  const drivenMetrics = (html.match(/team-detail-card__metric"\s+data-count-driven/g) || []).length;
+  assert.equal(drivenMetrics, 3, 'expected all 3 team-card metric blocks to be driven');
+});
+
+test('landing-animations.js wires the hero typewriter', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('runTypewriter'), 'must define runTypewriter');
+  assert.ok(raw.includes('hero-headline'), 'must target the hero-headline class');
+  assert.ok(raw.includes('hero-headline__word'), 'must reveal word spans');
+  assert.ok(raw.includes('hero-headline__cursor'), 'must reveal cursor');
+});
+
+test('landing-animations.js seeds the activity feed with 8 atomic entries', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('FEED_ENTRIES'), 'must define a FEED_ENTRIES array');
+  assert.ok(raw.includes("'Hunter'"),     'feed must have a Hunter entry');
+  assert.ok(raw.includes("'Strategist'"), 'feed must have a Strategist entry');
+  assert.ok(raw.includes("'Applier'"),    'feed must have an Applier entry');
+  // Atomic, accessible language — every line is a single small action
+  assert.ok(raw.includes('Searching new job listings'),  'Hunter step 1');
+  assert.ok(raw.includes('Found 5 strong-fit roles'),    'Hunter step 2');
+  assert.ok(raw.includes('Picked: Senior PM at Linear'), 'Strategist step 1');
+  assert.ok(raw.includes('Reading the job post'),        'Strategist step 2');
+  assert.ok(raw.includes('Drafting a tailored cover letter'), 'Strategist step 3');
+  assert.ok(raw.includes('Filling in the application'),  'Applier step 1');
+  assert.ok(raw.includes('Uploading resume and cover letter'), 'Applier step 2');
+  assert.ok(raw.includes('Submitted'),                   'Applier step 3 (terminal)');
+  // Negative coverage: must use short agent names, not "Job X" forms
+  assert.ok(!raw.includes("'Job Hunter'"),     'feed must use "Hunter", not "Job Hunter"');
+  assert.ok(!raw.includes("'Job Strategist'"), 'feed must use "Strategist", not "Job Strategist"');
+  assert.ok(!raw.includes("'Job Applier'"),    'feed must use "Applier", not "Job Applier"');
+  // The footer counter is updated by the JS, not the HTML
+  assert.ok(raw.includes('data-feed-count'),             'must update footer counter');
+  // Spinner frames present
+  assert.ok(raw.includes('SPINNER_FRAMES'),              'must define spinner frames');
+});
+
+test('landing.html chart SVG has class hooks for animation', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  assert.ok(html.includes('class="chart-fill"'),       'expected chart-fill class on filled area');
+  assert.ok(html.includes('class="chart-line"'),       'expected chart-line class on polyline');
+  assert.ok(html.includes('class="chart-annotation"'), 'expected chart-annotation class on final label');
+  const dotCount = (html.match(/class="chart-dot"/g) || []).length;
+  assert.ok(dotCount >= 12, `expected at least 12 chart-dot circles, got ${dotCount}`);
+});
+
+test('landing-animations.js wires chart line draw and driven counters', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('runChart'),              'must define runChart');
+  assert.ok(raw.includes('getTotalLength'),        'must measure polyline length');
+  assert.ok(raw.includes('--chart-line-length'),   'must set CSS custom prop for line length');
+  assert.ok(raw.includes("classList.add('is-drawing')"), 'must add is-drawing class');
+  assert.ok(raw.includes('runTeamCardCounters'),   'must define team-card counter driver');
 });

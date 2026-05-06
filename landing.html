@@ -38,6 +38,7 @@
   };
 })();
 </script>
+<script defer src="/landing-animations.js"></script>
 </head>
 <body class="landing">
 
@@ -64,7 +65,13 @@
   <!-- ═══ 1. Hero ═══ -->
   <section class="landing-section hero" aria-labelledby="hero-heading">
     <div class="hero__copy">
-      <h1 id="hero-heading">Don&rsquo;t apply<br>alone.</h1>
+      <h1 id="hero-heading" class="hero-headline" aria-label="Don't apply alone.">
+        <span class="hero-headline__word" data-word="0" aria-hidden="true">Don&rsquo;t</span>
+        <span class="hero-headline__word" data-word="1" aria-hidden="true">apply</span>
+        <br aria-hidden="true">
+        <span class="hero-headline__word" data-word="2" aria-hidden="true">alone.</span>
+        <span class="hero-headline__cursor" aria-hidden="true"></span>
+      </h1>
       <p class="hero__brand-line">
         <strong>{{BRAND_NAME}}</strong> is your personal AI career team.
       </p>
@@ -87,67 +94,36 @@
             <span class="live-dot" aria-hidden="true"></span>
             LIVE
           </span>
-          <span class="feed-card__title">Your team, last night</span>
+          <span class="feed-card__title">Your team, working</span>
         </div>
-        <ul class="feed-list">
-          <li class="feed-entry">
-            <span class="feed-entry__time">02:14</span>
-            <span class="feed-entry__agent feed-entry__agent--hunter">Hunter</span>
-            <span class="feed-entry__action">Found a strong match: Director of AI Product at a Series B fintech (94% fit).</span>
-          </li>
-          <li class="feed-entry">
-            <span class="feed-entry__time">02:31</span>
-            <span class="feed-entry__agent feed-entry__agent--hunter">Hunter</span>
-            <span class="feed-entry__action">Filtered out 14 roles below your seniority and direction.</span>
-          </li>
-          <li class="feed-entry">
-            <span class="feed-entry__time">02:47</span>
-            <span class="feed-entry__agent feed-entry__agent--strategist">Strategist</span>
-            <span class="feed-entry__action">Tailored your story for the Linear Senior PM role. Opening line sharpened.</span>
-          </li>
-          <li class="feed-entry">
-            <span class="feed-entry__time">03:08</span>
-            <span class="feed-entry__agent feed-entry__agent--applier">Applier</span>
-            <span class="feed-entry__action">Submitted via Greenhouse. Confirmation captured.</span>
-          </li>
-          <li class="feed-entry">
-            <span class="feed-entry__time">04:02</span>
-            <span class="feed-entry__agent feed-entry__agent--system">System</span>
-            <span class="feed-entry__action">Spotted a pattern: roles framed around &ldquo;agentic&rdquo; raise your reply rate 2.4&times;. Search updated.</span>
-          </li>
-          <li class="feed-entry feed-entry--needs-you">
-            <span class="feed-entry__time">06:30</span>
-            <span class="feed-entry__agent feed-entry__agent--applier">Applier</span>
-            <span class="feed-entry__action"><strong>Needs your input:</strong> recruiter at Datadog replied. Draft response ready.</span>
-          </li>
-        </ul>
+        <ul class="feed-list"></ul>
         <div class="feed-card__footer">
           <span>While you slept, your team worked.</span>
-          <span class="feed-card__count">6 actions overnight</span>
+          <span class="feed-card__count" data-feed-count>0 actions</span>
         </div>
       </div>
     </aside>
   </section>
 
   <!-- ═══ 2. The market shifted ═══ -->
-  <section class="landing-section">
+  <section class="landing-section reveal">
     <span class="section-label">01 The market shifted</span>
     <div class="problem">
       <p class="problem__pullquote">
         Employers bring AI to every application. Most candidates still show up without their own. Like bringing a knife to a gunfight.
       </p>
 
-      <div class="stat-grid" role="list">
-        <div class="stat-tile" role="listitem">
-          <div class="stat-tile__num">87%</div>
+      <div class="stat-grid stagger-reveal" role="list">
+        <div class="stat-tile reveal" role="listitem">
+          <div class="stat-tile__num" data-count-to="87" data-count-template="{n}%">87%</div>
           <div class="stat-tile__label">of large employers use AI to screen applications</div>
         </div>
-        <div class="stat-tile" role="listitem">
-          <div class="stat-tile__num">&lt;10%</div>
+        <div class="stat-tile reveal" role="listitem">
+          <div class="stat-tile__num" data-count-to="10" data-count-template="&lt;{n}%">&lt;10%</div>
           <div class="stat-tile__label">of candidates use AI to optimize their search and applications</div>
         </div>
-        <div class="stat-tile" role="listitem">
-          <div class="stat-tile__num">300:1</div>
+        <div class="stat-tile reveal" role="listitem">
+          <div class="stat-tile__num" data-count-to="300" data-count-template="{n}:1">300:1</div>
           <div class="stat-tile__label">typical applications-to-interview ratio for cold, manual job seekers in 2026</div>
         </div>
       </div>
@@ -199,13 +175,13 @@
   </section>
 
   <!-- ═══ 3. Meet your team + how they work (combined) ═══ -->
-  <section id="how-it-works" class="landing-section">
+  <section id="how-it-works" class="landing-section reveal">
     <span class="section-label">02 Meet your team</span>
     <h2 class="section-heading">Three AI specialists. One job. Yours.</h2>
     <p class="section-subhead">Three specialists working in concert. Hunter scans. Strategist sharpens. Applier sends. The team learns what works for you and gets sharper every week.</p>
 
-    <div class="team-grid">
-      <article class="team-detail-card" data-agent="hunter">
+    <div class="team-grid stagger-reveal">
+      <article class="team-detail-card reveal" data-agent="hunter">
         <div class="team-detail-card__role">AI AGENT 01</div>
         <h3 class="team-detail-card__name">Job Hunter</h3>
         <ol class="team-detail-card__steps" aria-label="What the Job Hunter does">
@@ -222,14 +198,14 @@
             <span class="team-detail-card__step-text">Ranks the strongest matches first</span>
           </li>
         </ol>
-        <div class="team-detail-card__metric">
-          <div class="team-detail-card__metric-value">470</div>
+        <div class="team-detail-card__metric" data-count-driven>
+          <div class="team-detail-card__metric-value" data-count-to="470">470</div>
           <div class="team-detail-card__metric-label">roles screened last week</div>
         </div>
         <p class="team-detail-card__see"><em>You see:</em> a queue of strong matches.</p>
       </article>
 
-      <article class="team-detail-card" data-agent="strategist">
+      <article class="team-detail-card reveal" data-agent="strategist">
         <div class="team-detail-card__role">AI AGENT 02</div>
         <h3 class="team-detail-card__name">Job Strategist</h3>
         <ol class="team-detail-card__steps" aria-label="What the Job Strategist does">
@@ -246,14 +222,14 @@
             <span class="team-detail-card__step-text">Sharpens cover letter and resume</span>
           </li>
         </ol>
-        <div class="team-detail-card__metric">
-          <div class="team-detail-card__metric-value">120</div>
+        <div class="team-detail-card__metric" data-count-driven>
+          <div class="team-detail-card__metric-value" data-count-to="120">120</div>
           <div class="team-detail-card__metric-label">applications tailored last week</div>
         </div>
         <p class="team-detail-card__see"><em>You see:</em> a sharper opening paragraph.</p>
       </article>
 
-      <article class="team-detail-card" data-agent="applier">
+      <article class="team-detail-card reveal" data-agent="applier">
         <div class="team-detail-card__role">AI AGENT 03</div>
         <h3 class="team-detail-card__name">Job Applier</h3>
         <ol class="team-detail-card__steps" aria-label="What the Job Applier does">
@@ -270,8 +246,8 @@
             <span class="team-detail-card__step-text">Surfaces only what needs you</span>
           </li>
         </ol>
-        <div class="team-detail-card__metric">
-          <div class="team-detail-card__metric-value">80</div>
+        <div class="team-detail-card__metric" data-count-driven>
+          <div class="team-detail-card__metric-value" data-count-to="80">80</div>
           <div class="team-detail-card__metric-label">applications submitted last week</div>
         </div>
         <p class="team-detail-card__see"><em>You see:</em> applications going out, replies coming back.</p>
@@ -367,23 +343,23 @@
   </section>
 
   <!-- ═══ 4. Your interview rate climbs every week ═══ -->
-  <section class="landing-section">
+  <section class="landing-section reveal">
     <span class="section-label">03 Your interview rate</span>
     <h2 class="section-heading">More applications. More interviews. Better odds every week.</h2>
     <p class="section-subhead">{{BRAND_NAME}} tunes itself toward what works for you. The pattern shows up in your interview conversion rate, the only KPI that matters in a job search.</p>
 
     <div class="rate-chart" aria-label="Interviews generated per week over 12 weeks">
-      <div class="rate-chart__stats">
+      <div class="rate-chart__stats" data-count-driven>
         <div class="rate-chart__stat">
-          <span class="rate-chart__stat-value">840</span>
+          <span class="rate-chart__stat-value" data-count-to="840">840</span>
           <span class="rate-chart__stat-label">applications submitted</span>
         </div>
         <div class="rate-chart__stat">
-          <span class="rate-chart__stat-value">45</span>
+          <span class="rate-chart__stat-value" data-count-to="45">45</span>
           <span class="rate-chart__stat-label">interviews generated</span>
         </div>
         <div class="rate-chart__stat rate-chart__stat--highlight">
-          <span class="rate-chart__stat-value">5%</span>
+          <span class="rate-chart__stat-value" data-count-to="5" data-count-template="{n}%">5%</span>
           <span class="rate-chart__stat-label">conversion rate, climbing from 0%</span>
         </div>
       </div>
@@ -405,31 +381,31 @@
           <text x="48" y="20"  text-anchor="end" fill="#6a7488" font-size="10" font-family="JetBrains Mono">12</text>
 
           <!-- Filled area under the line -->
-          <path d="M 56,200 L 114,185 L 173,185 L 231,169 L 289,169 L 347,154 L 405,154 L 464,123 L 522,138 L 580,92 L 638,108 L 696,62 L 696,200 L 56,200 Z"
+          <path class="chart-fill" d="M 56,200 L 114,185 L 173,185 L 231,169 L 289,169 L 347,154 L 405,154 L 464,123 L 522,138 L 580,92 L 638,108 L 696,62 L 696,200 L 56,200 Z"
                 fill="#ff5e1a" fill-opacity="0.10"/>
 
           <!-- Line: interviews per week, climbing with variance -->
-          <polyline points="56,200 114,185 173,185 231,169 289,169 347,154 405,154 464,123 522,138 580,92 638,108 696,62"
+          <polyline class="chart-line" points="56,200 114,185 173,185 231,169 289,169 347,154 405,154 464,123 522,138 580,92 638,108 696,62"
                     fill="none" stroke="#ff5e1a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
 
           <!-- Dots at each weekly data point -->
           <g>
-            <circle cx="56"  cy="200" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="114" cy="185" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="173" cy="185" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="231" cy="169" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="289" cy="169" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="347" cy="154" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="405" cy="154" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="464" cy="123" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="522" cy="138" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="580" cy="92"  r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="638" cy="108" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
-            <circle cx="696" cy="62"  r="5" fill="#ff5e1a" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="56"  cy="200" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="114" cy="185" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="173" cy="185" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="231" cy="169" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="289" cy="169" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="347" cy="154" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="405" cy="154" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="464" cy="123" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="522" cy="138" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="580" cy="92"  r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="638" cy="108" r="4" fill="#eef2f8" stroke="#ff5e1a" stroke-width="2"/>
+            <circle class="chart-dot" cx="696" cy="62"  r="5" fill="#ff5e1a" stroke="#ff5e1a" stroke-width="2"/>
           </g>
 
           <!-- Final point annotation -->
-          <text x="696" y="48" text-anchor="middle" fill="#0d1426" font-size="14" font-family="Space Grotesk" font-weight="700">9</text>
+          <text class="chart-annotation" x="696" y="48" text-anchor="middle" fill="#0d1426" font-size="14" font-family="Space Grotesk" font-weight="700">9</text>
 
           <!-- X-axis week labels (subset) -->
           <text x="56"  y="224" text-anchor="middle" fill="#6a7488" font-size="10" font-family="JetBrains Mono">W1</text>
@@ -448,13 +424,13 @@
   </section>
 
   <!-- ═══ 6. Pricing ═══ -->
-  <section id="pricing" class="landing-section">
+  <section id="pricing" class="landing-section reveal">
     <span class="section-label">04 Pricing</span>
     <h2 class="section-heading">Early access pricing.</h2>
     <p class="section-subhead">Founding rates locked for one year. Lock in while we&rsquo;re in early access.</p>
 
-    <div class="pricing-grid">
-      <div class="price-card">
+    <div class="pricing-grid stagger-reveal">
+      <div class="price-card reveal">
         <div class="price-card__tier">Free</div>
         <div class="price-card__strike price-card__strike--ghost" aria-hidden="true">&nbsp;</div>
         <div class="price-card__numeral">Free</div>
@@ -467,11 +443,11 @@
           <li>Community access</li>
         </ul>
       </div>
-      <div class="price-card price-card--recommended">
+      <div class="price-card price-card--recommended reveal">
         <div class="price-card__pill">Recommended</div>
         <div class="price-card__tier">Standard</div>
         <div class="price-card__strike">$50 / month</div>
-        <div class="price-card__numeral">$40<span class="price-card__suffix">/ month</span></div>
+        <div class="price-card__numeral"><span data-count-to="40" data-count-template="${n}">$40</span><span class="price-card__suffix">/ month</span></div>
         <div class="price-card__price-note">Early Access pricing &middot; Save 20%</div>
         <p class="price-card__tagline">AI-assisted applications.</p>
         <ul class="price-card__features">
@@ -480,10 +456,10 @@
           <li>Autonomous job application</li>
         </ul>
       </div>
-      <div class="price-card">
+      <div class="price-card reveal">
         <div class="price-card__tier">Premium</div>
         <div class="price-card__strike">$200 / month</div>
-        <div class="price-card__numeral">$160<span class="price-card__suffix">/ month</span></div>
+        <div class="price-card__numeral"><span data-count-to="160" data-count-template="${n}">$160</span><span class="price-card__suffix">/ month</span></div>
         <div class="price-card__price-note">Early Access pricing &middot; Save 20%</div>
         <p class="price-card__tagline">Fully autonomous interview generation.</p>
         <ul class="price-card__features">
@@ -505,24 +481,24 @@
   </section>
 
   <!-- ═══ 7. Founding cohort + final CTA ═══ -->
-  <section class="landing-section trust">
+  <section class="landing-section trust reveal">
     <span class="section-label">05 The early-access offer</span>
     <h2 class="section-heading">Try {{BRAND_NAME}} free for two weeks.</h2>
     <p class="section-subhead">Two weeks of full access in exchange for your honest feedback. Founding members shape the product, trade hunting strategies, and lock in pricing for a year.</p>
 
-    <div class="offer-grid" role="list">
-      <div class="offer-tile" role="listitem">
-        <div class="offer-tile__num">2</div>
+    <div class="offer-grid stagger-reveal" role="list">
+      <div class="offer-tile reveal" role="listitem">
+        <div class="offer-tile__num" data-count-to="2">2</div>
         <div class="offer-tile__label">weeks of full access</div>
         <div class="offer-tile__detail">Every agent. Every feature. From day one. No card required.</div>
       </div>
-      <div class="offer-tile offer-tile--moss" role="listitem">
+      <div class="offer-tile offer-tile--moss reveal" role="listitem">
         <div class="offer-tile__num">∞</div>
         <div class="offer-tile__label">community membership</div>
         <div class="offer-tile__detail">{{BRAND_NAME}} Job Hunters Discord. Founder direct line. Strategies traded between members.</div>
       </div>
-      <div class="offer-tile offer-tile--clay" role="listitem">
-        <div class="offer-tile__num">20%</div>
+      <div class="offer-tile offer-tile--clay reveal" role="listitem">
+        <div class="offer-tile__num" data-count-to="20" data-count-template="{n}%">20%</div>
         <div class="offer-tile__label">off your first year</div>
         <div class="offer-tile__detail">Founding pricing locks the moment you join. Standard rate applies after year one.</div>
       </div>
