@@ -3,15 +3,30 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('http');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
 
-const TMP_SIGNUPS = path.join(os.tmpdir(), 'prophase-test-signups-' + Date.now() + '.jsonl');
-process.env.SIGNUPS_PATH = TMP_SIGNUPS;
+const SHEETS_TEST_URL = 'https://example.invalid/sheets-webhook';
+process.env.SHEETS_WEBHOOK_URL = SHEETS_TEST_URL;
 process.env.RESEND_API_KEY = '';
 
 const { handler } = require('./server');
+
+const sheetCalls = [];
+let sheetResponse = { status: 200, body: '{"ok":true}' };
+
+const originalFetch = global.fetch;
+global.fetch = async (url, init) => {
+  const urlStr = typeof url === 'string' ? url : url.toString();
+  if (urlStr === SHEETS_TEST_URL) {
+    sheetCalls.push({ url: urlStr, body: init && init.body });
+    return new Response(sheetResponse.body, { status: sheetResponse.status });
+  }
+  return originalFetch(url, init);
+};
+
+function resetSheetMock() {
+  sheetCalls.length = 0;
+  sheetResponse = { status: 200, body: '{"ok":true}' };
+}
 
 function startServer() {
   return new Promise((resolve) => {
@@ -96,8 +111,8 @@ test('dashboard, admin, and arbitrary paths return 404', async () => {
   } finally { server.close(); }
 });
 
-test('POST /api/early-access with valid body returns 200 + appends to JSONL', async () => {
-  if (fs.existsSync(TMP_SIGNUPS)) fs.unlinkSync(TMP_SIGNUPS);
+test('POST /api/early-access with valid body returns 200 + posts to sheets webhook', async () => {
+  resetSheetMock();
   const { server, port } = await startServer();
   try {
     const res = await fetchPath(port, '/api/early-access', {
@@ -108,17 +123,34 @@ test('POST /api/early-access with valid body returns 200 + appends to JSONL', as
     assert.equal(res.status, 200);
     const body = await res.json();
     assert.equal(body.ok, true);
-    assert.ok(fs.existsSync(TMP_SIGNUPS), 'expected JSONL file to be created');
-    const line = fs.readFileSync(TMP_SIGNUPS, 'utf8').trim();
-    const row = JSON.parse(line);
-    assert.equal(row.name, 'Ada Lovelace');
-    assert.equal(row.email, 'ada@example.com');
-    assert.equal(row.goals, 'machines');
-    assert.ok(row.receivedAt, 'expected receivedAt timestamp');
+    assert.equal(sheetCalls.length, 1, 'expected exactly one webhook POST');
+    const sent = JSON.parse(sheetCalls[0].body);
+    assert.equal(sent.name, 'Ada Lovelace');
+    assert.equal(sent.email, 'ada@example.com');
+    assert.equal(sent.goals, 'machines');
+    assert.ok(sent.received_at, 'expected received_at timestamp on webhook payload');
+  } finally { server.close(); }
+});
+
+test('POST /api/early-access still returns 200 when sheets webhook returns 5xx', async () => {
+  resetSheetMock();
+  sheetResponse = { status: 500, body: 'boom' };
+  const { server, port } = await startServer();
+  try {
+    const res = await fetchPath(port, '/api/early-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'Grace Hopper', email: 'grace@example.com' }),
+    });
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.ok, true);
+    assert.equal(sheetCalls.length, 1, 'webhook was still attempted');
   } finally { server.close(); }
 });
 
 test('POST /api/early-access without name returns 400', async () => {
+  resetSheetMock();
   const { server, port } = await startServer();
   try {
     const res = await fetchPath(port, '/api/early-access', {
@@ -129,6 +161,7 @@ test('POST /api/early-access without name returns 400', async () => {
     assert.equal(res.status, 400);
     const body = await res.json();
     assert.equal(body.ok, false);
+    assert.equal(sheetCalls.length, 0, 'webhook should not fire on validation failure');
   } finally { server.close(); }
 });
 
@@ -154,8 +187,4 @@ test('POST /api/early-access with invalid JSON returns 400', async () => {
     });
     assert.equal(res.status, 400);
   } finally { server.close(); }
-});
-
-test('cleanup tmp signups file', () => {
-  if (fs.existsSync(TMP_SIGNUPS)) fs.unlinkSync(TMP_SIGNUPS);
 });

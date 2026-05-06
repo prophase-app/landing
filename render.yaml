@@ -16,3 +16,5 @@ services:
         value: "Prophase <noreply@prophase.app>"
       - key: RESEND_TO
         sync: false
+      - key: SHEETS_WEBHOOK_URL
+        sync: false

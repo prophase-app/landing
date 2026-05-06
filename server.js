@@ -21,7 +21,7 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const RESEND_FROM = process.env.RESEND_FROM || 'Prophase <noreply@prophase.app>';
 const RESEND_TO = process.env.RESEND_TO || '';
 
-const SIGNUPS_PATH = process.env.SIGNUPS_PATH || path.join(__dirname, 'data', 'signups.jsonl');
+const SHEETS_WEBHOOK_URL = process.env.SHEETS_WEBHOOK_URL || '';
 
 const ROBOTS_TXT = 'User-agent: *\nAllow: /\n';
 
@@ -76,6 +76,36 @@ function sendEmail({ subject, text }) {
   req.end();
 }
 
+function logToSheet(safe) {
+  if (!SHEETS_WEBHOOK_URL) {
+    console.log('[sheets] would have logged: ' + safe.email);
+    return;
+  }
+  const payload = JSON.stringify({
+    received_at:        safe.receivedAt,
+    name:               safe.name,
+    email:              safe.email,
+    current_role:       safe.current_role,
+    currently_employed: safe.currently_employed,
+    target_role:        safe.target_role,
+    linkedin:           safe.linkedin,
+    actively_applying:  safe.actively_applying,
+    current:            safe.current,
+    search_duration:    safe.search_duration,
+    goals:              safe.goals,
+    user_agent:         safe.userAgent,
+  });
+  // Apps Script web apps 302-redirect to script.googleusercontent.com — fetch follows redirects, https.request does not.
+  fetch(SHEETS_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: payload,
+    redirect: 'follow',
+  }).then((resp) => {
+    if (!resp.ok) console.error('[sheets] non-2xx response: HTTP ' + resp.status);
+  }).catch((err) => console.error('[sheets] transport error:', err.message));
+}
+
 function buildEmailBody(safe) {
   const lines = [
     'New ' + BRAND.name + ' Early Access signup:',
@@ -124,13 +154,7 @@ function handleEarlyAccessSubmit(req, res) {
     if (!safe.name || !safe.email) {
       return send(res, 400, JSON.stringify({ ok: false, error: 'name and email are required' }), 'application/json');
     }
-    try {
-      fs.mkdirSync(path.dirname(SIGNUPS_PATH), { recursive: true });
-      fs.appendFileSync(SIGNUPS_PATH, JSON.stringify(safe) + '\n');
-    } catch (e) {
-      console.error('[early-access] failed to write signup log:', e.message);
-      return send(res, 500, JSON.stringify({ ok: false, error: 'log write failed' }), 'application/json');
-    }
+    logToSheet(safe);
     sendEmail({
       subject: '[' + BRAND.name + '] Early Access signup: ' + safe.name,
       text: buildEmailBody(safe),

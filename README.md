@@ -33,7 +33,7 @@ Override the port with `PORT=4000 node server.js`.
 | `RESEND_API_KEY` | _(unset)_ | Resend API key. Email is skipped (logged only) if unset. |
 | `RESEND_FROM` | `Prophase <noreply@prophase.app>` | Email sender |
 | `RESEND_TO` | _(unset)_ | Email recipient (where signup notifications go) |
-| `SIGNUPS_PATH` | `./data/signups.jsonl` | Where to append signup rows |
+| `SHEETS_WEBHOOK_URL` | _(unset)_ | Google Apps Script web-app URL. On each signup the server POSTs the JSON payload here, which appends a row to a Google Sheet. Skipped (logged only) if unset. See "Sign-ups tracking" below. |
 
 ## Tests
 
@@ -43,9 +43,49 @@ node --test
 
 The suite verifies template substitution, route allowlist (anything not in the allowlist returns 404), and the signup pipeline end-to-end.
 
+## Sign-ups tracking
+
+Every successful POST to `/api/early-access` is fanned out to two destinations:
+
+1. **Email** via Resend (`RESEND_TO`) — immediate notification.
+2. **Google Sheet** via a bound Apps Script web app (`SHEETS_WEBHOOK_URL`) — durable, sortable, exportable record of every signup.
+
+Both writes are fire-and-forget — failure of either logs an error but never blocks the user's success response.
+
+To set up the sheet:
+
+1. Create a Google Sheet, rename tab 1 to `Sign-ups`, and add this header row:
+   ```
+   received_at | name | email | current_role | currently_employed | target_role | linkedin | actively_applying | current | search_duration | goals | user_agent
+   ```
+2. Extensions → Apps Script. Replace `Code.gs` with:
+   ```javascript
+   const SHEET_NAME = 'Sign-ups';
+   function doPost(e) {
+     try {
+       const d = JSON.parse(e.postData.contents);
+       const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+       sheet.appendRow([
+         d.received_at || new Date().toISOString(),
+         d.name || '', d.email || '', d.current_role || '',
+         d.currently_employed || '', d.target_role || '', d.linkedin || '',
+         d.actively_applying || '', d.current || '', d.search_duration || '',
+         d.goals || '', d.user_agent || ''
+       ]);
+       return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+         .setMimeType(ContentService.MimeType.JSON);
+     } catch (err) {
+       return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
+         .setMimeType(ContentService.MimeType.JSON);
+     }
+   }
+   ```
+3. Deploy → New deployment → Type: **Web app**, Execute as: **Me**, Who has access: **Anyone**. Copy the `https://script.google.com/macros/s/.../exec` URL.
+4. In Render → service → Environment, set `SHEETS_WEBHOOK_URL` to that URL. Treat it as a secret (anyone with the URL can append rows).
+
 ## Deploy
 
-Configured for [Render](https://render.com) via `render.yaml`. Connect the repo to Render, paste `RESEND_API_KEY` and `RESEND_TO` as secret env vars, and Render handles the rest. The persistent disk at `/opt/render/project/src/data` keeps signups across deploys.
+Configured for [Render](https://render.com) via `render.yaml`. Connect the repo to Render, set the secret env vars (`RESEND_API_KEY`, `RESEND_TO`, `SHEETS_WEBHOOK_URL`) in the service dashboard, and Render handles the rest. The free tier is sufficient — there is no persistent disk; the Google Sheet is the durable signup record.
 
 DNS: at the registrar, point `prophase.app` (apex, via A-records to Render's load balancers) and `www.prophase.app` (CNAME) at the Render service.
 
