@@ -76,13 +76,27 @@ function sendEmail({ subject, text }) {
   req.end();
 }
 
+function formatReceivedAtForSheet(iso) {
+  // Render the timestamp in Central European Time (Europe/Berlin) so the sheet
+  // reads naturally for the operator. Intl handles the CET/CEST DST toggle.
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Berlin',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+    timeZoneName: 'short',
+  }).formatToParts(new Date(iso));
+  const get = (t) => (parts.find(p => p.type === t) || {}).value || '';
+  return get('year') + '-' + get('month') + '-' + get('day') + ' ' +
+         get('hour') + ':' + get('minute') + ' ' + get('timeZoneName');
+}
+
 function logToSheet(safe) {
   if (!SHEETS_WEBHOOK_URL) {
     console.log('[sheets] would have logged: ' + safe.email);
     return;
   }
   const payload = JSON.stringify({
-    received_at:        safe.receivedAt,
+    received_at:        formatReceivedAtForSheet(safe.receivedAt),
     name:               safe.name,
     email:              safe.email,
     current_role:       safe.current_role,

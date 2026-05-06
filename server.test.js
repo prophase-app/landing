@@ -128,7 +128,7 @@ test('POST /api/early-access with valid body returns 200 + posts to sheets webho
     assert.equal(sent.name, 'Ada Lovelace');
     assert.equal(sent.email, 'ada@example.com');
     assert.equal(sent.goals, 'machines');
-    assert.ok(sent.received_at, 'expected received_at timestamp on webhook payload');
+    assert.match(sent.received_at, /^\d{4}-\d{2}-\d{2} \d{2}:\d{2} (CET|CEST)$/, 'received_at should be human-readable YYYY-MM-DD HH:MM CET/CEST');
   } finally { server.close(); }
 });
 
