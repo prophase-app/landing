@@ -76,9 +76,9 @@ function sendEmail({ subject, text }) {
   req.end();
 }
 
-function formatReceivedAtForSheet(iso) {
-  // Render the timestamp in Central European Time (Europe/Berlin) so the sheet
-  // reads naturally for the operator. Intl handles the CET/CEST DST toggle.
+function formatReceivedAt(iso) {
+  // Render the timestamp in Central European Time (Europe/Berlin) so it reads
+  // naturally for the operator. Intl handles the CET/CEST DST toggle.
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Berlin',
     year: 'numeric', month: '2-digit', day: '2-digit',
@@ -96,7 +96,7 @@ function logToSheet(safe) {
     return;
   }
   const payload = JSON.stringify({
-    received_at:        formatReceivedAtForSheet(safe.receivedAt),
+    received_at:        formatReceivedAt(safe.receivedAt),
     name:               safe.name,
     email:              safe.email,
     current_role:       safe.current_role,
@@ -143,7 +143,7 @@ function buildEmailBody(safe) {
   lines.push(safe.goals || '(not provided)');
   lines.push('');
   lines.push('---');
-  lines.push('Received: ' + safe.receivedAt);
+  lines.push('Received: ' + formatReceivedAt(safe.receivedAt));
   lines.push('UA:       ' + safe.userAgent);
   return lines.join('\n');
 }
