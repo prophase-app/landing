@@ -461,3 +461,12 @@ test('renderLandingHtml grids carry .stagger-reveal with .reveal children', () =
   assert.ok((html.match(/class="price-card[^"]*reveal"/g)   || []).length >= 3, 'price cards need reveal');
   assert.ok((html.match(/class="offer-tile[^"]*reveal"/g)   || []).length >= 3, 'offer tiles need reveal');
 });
+
+test('landing-animations.js IIFE exists and wires reveal observer', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.startsWith("'use strict'"), 'must be strict mode');
+  assert.ok(raw.includes('IntersectionObserver'), 'must use IntersectionObserver for reveal');
+  assert.ok(raw.includes('prefers-reduced-motion'), 'must check prefers-reduced-motion');
+  assert.ok(raw.includes("classList.add('is-visible')"), 'must add is-visible class');
+});
