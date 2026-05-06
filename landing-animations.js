@@ -131,10 +131,122 @@
     }
   }
 
+  // ── activity feed ───────────────────────────────────────────────────────
+  // Render a simulated overnight orchestration into the hero feed-list.
+  // Eight atomic activities at ~900ms cadence. The most recent line shows a
+  // Braille spinner; when the next line lands, the previous spinner is
+  // removed (so the previous step reads as "completed"). The footer counter
+  // ticks up as each entry lands. Plays once on page load.
+
+  const FEED_ENTRIES = [
+    { time: '02:14', agent: 'hunter',     label: 'Hunter',     msg: 'Searching new job listings' },
+    { time: '02:14', agent: 'hunter',     label: 'Hunter',     msg: 'Found 5 strong-fit roles' },
+    { time: '02:31', agent: 'strategist', label: 'Strategist', msg: 'Picked: Senior PM at Linear' },
+    { time: '02:33', agent: 'strategist', label: 'Strategist', msg: 'Reading the job post' },
+    { time: '02:47', agent: 'strategist', label: 'Strategist', msg: 'Drafting a tailored cover letter' },
+    { time: '03:02', agent: 'applier',    label: 'Applier',    msg: 'Filling in the application' },
+    { time: '03:05', agent: 'applier',    label: 'Applier',    msg: 'Uploading resume and cover letter' },
+    { time: '03:08', agent: 'applier',    label: 'Applier',    msg: 'Submitted \u2014 tracker updated' },
+  ];
+
+  const SPINNER_FRAMES = ['\u280B', '\u2819', '\u2839', '\u2838', '\u283C', '\u2834', '\u2826', '\u2827', '\u2807', '\u280F'];
+  // Braille dots: ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
+
+  function buildFeedEntry(entry, withSpinner) {
+    const li = document.createElement('li');
+    li.className = 'feed-entry';
+    const time = document.createElement('span');
+    time.className = 'feed-entry__time';
+    time.textContent = entry.time;
+    const agent = document.createElement('span');
+    agent.className = 'feed-entry__agent feed-entry__agent--' + entry.agent;
+    agent.textContent = entry.label;
+    const action = document.createElement('span');
+    action.className = 'feed-entry__action';
+    action.textContent = entry.msg;
+    li.appendChild(time);
+    li.appendChild(agent);
+    li.appendChild(action);
+    if (withSpinner) {
+      const spin = document.createElement('span');
+      spin.className = 'feed-entry__spinner';
+      spin.setAttribute('aria-hidden', 'true');
+      spin.textContent = SPINNER_FRAMES[0];
+      action.appendChild(spin);
+    }
+    return li;
+  }
+
+  function spinSpinner(spinEl) {
+    let i = 0;
+    const id = setInterval(() => {
+      i = (i + 1) % SPINNER_FRAMES.length;
+      spinEl.textContent = SPINNER_FRAMES[i];
+    }, 80);
+    return id;
+  }
+
+  function runActivityFeed() {
+    const list = document.querySelector('.feed-list');
+    const counter = document.querySelector('[data-feed-count]');
+    if (!list) return;
+
+    if (reduceMotion) {
+      FEED_ENTRIES.forEach((entry) => {
+        const li = buildFeedEntry(entry, false);
+        li.classList.add('is-visible');
+        list.appendChild(li);
+      });
+      if (counter) counter.textContent = FEED_ENTRIES.length + ' actions overnight';
+      return;
+    }
+
+    const cadence = 900;
+    const leadIn = 600; // give the page a beat after first paint
+
+    let prevSpinnerInterval = null;
+    let prevAction = null;
+
+    FEED_ENTRIES.forEach((entry, i) => {
+      const isLast = i === FEED_ENTRIES.length - 1;
+      setTimeout(() => {
+        // Stop spinner on the previous entry (now "completed")
+        if (prevSpinnerInterval !== null) {
+          clearInterval(prevSpinnerInterval);
+          prevSpinnerInterval = null;
+        }
+        if (prevAction) {
+          const oldSpinner = prevAction.querySelector('.feed-entry__spinner');
+          if (oldSpinner) oldSpinner.remove();
+        }
+
+        // Append the new entry
+        const li = buildFeedEntry(entry, !isLast);
+        list.appendChild(li);
+        // Force reflow so the transition kicks in
+        // eslint-disable-next-line no-unused-expressions
+        li.offsetWidth;
+        li.classList.add('is-visible');
+
+        // Wire spinner if this isn't the terminal step
+        if (!isLast) {
+          const spinEl = li.querySelector('.feed-entry__spinner');
+          if (spinEl) prevSpinnerInterval = spinSpinner(spinEl);
+          prevAction = li.querySelector('.feed-entry__action');
+        }
+
+        // Tick the footer counter
+        if (counter) counter.textContent = (i + 1) + ' actions';
+        if (isLast && counter) counter.textContent = FEED_ENTRIES.length + ' actions overnight';
+      }, leadIn + i * cadence);
+    });
+  }
+
   function boot() {
     wireScrollReveal();
     wireCounters();
     runTypewriter();
+    runActivityFeed();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

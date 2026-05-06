@@ -497,3 +497,29 @@ test('landing-animations.js wires the hero typewriter', () => {
   assert.ok(raw.includes('hero-headline__word'), 'must reveal word spans');
   assert.ok(raw.includes('hero-headline__cursor'), 'must reveal cursor');
 });
+
+test('landing-animations.js seeds the activity feed with 8 atomic entries', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('FEED_ENTRIES'), 'must define a FEED_ENTRIES array');
+  assert.ok(raw.includes("'Hunter'"),     'feed must have a Hunter entry');
+  assert.ok(raw.includes("'Strategist'"), 'feed must have a Strategist entry');
+  assert.ok(raw.includes("'Applier'"),    'feed must have an Applier entry');
+  // Atomic, accessible language — every line is a single small action
+  assert.ok(raw.includes('Searching new job listings'),  'Hunter step 1');
+  assert.ok(raw.includes('Found 5 strong-fit roles'),    'Hunter step 2');
+  assert.ok(raw.includes('Picked: Senior PM at Linear'), 'Strategist step 1');
+  assert.ok(raw.includes('Reading the job post'),        'Strategist step 2');
+  assert.ok(raw.includes('Drafting a tailored cover letter'), 'Strategist step 3');
+  assert.ok(raw.includes('Filling in the application'),  'Applier step 1');
+  assert.ok(raw.includes('Uploading resume and cover letter'), 'Applier step 2');
+  assert.ok(raw.includes('Submitted'),                   'Applier step 3 (terminal)');
+  // Negative coverage: must use short agent names, not "Job X" forms
+  assert.ok(!raw.includes("'Job Hunter'"),     'feed must use "Hunter", not "Job Hunter"');
+  assert.ok(!raw.includes("'Job Strategist'"), 'feed must use "Strategist", not "Job Strategist"');
+  assert.ok(!raw.includes("'Job Applier'"),    'feed must use "Applier", not "Job Applier"');
+  // The footer counter is updated by the JS, not the HTML
+  assert.ok(raw.includes('data-feed-count'),             'must update footer counter');
+  // Spinner frames present
+  assert.ok(raw.includes('SPINNER_FRAMES'),              'must define spinner frames');
+});
