@@ -98,9 +98,6 @@
     sections.forEach((s) => io.observe(s));
   }
 
-  // Expose for other modules in this IIFE
-  const Counter = { animate: animateCount };
-
   // ── hero typewriter ─────────────────────────────────────────────────────
   // Reveal the three H1 word spans in sequence with a ~800ms cadence,
   // then reveal the blinking cursor. Skipped under reduced motion (all
@@ -187,6 +184,9 @@
   }
 
   function runActivityFeed() {
+    // Fires unconditionally on boot rather than gated on hero IntersectionObserver.
+    // The hero is always in the viewport on first paint at every supported viewport,
+    // so a gate would add code without changing observed behavior.
     const list = document.querySelector('.feed-list');
     const counter = document.querySelector('[data-feed-count]');
     if (!list) return;

@@ -394,7 +394,11 @@ test('renderLandingHtml hero activity feed list is empty (entries injected by JS
   const ulMatch = html.match(/<ul\s+class="feed-list"[^>]*>([\s\S]*?)<\/ul>/);
   assert.ok(ulMatch, 'expected feed-list <ul>');
   assert.ok(!ulMatch[1].includes('<li'), 'feed-list must be empty in source HTML');
-  assert.ok(ulMatch[0].includes('aria-live="polite"'), 'feed-list must be aria-live="polite"');
+  // Region labeling is on the parent <aside aria-label>; the <ul> itself does NOT
+  // get aria-live, otherwise screen readers queue 8 announcements at page load.
+  assert.ok(!ulMatch[0].includes('aria-live'), 'feed-list must not declare aria-live');
+  assert.ok(html.match(/<aside[^>]*class="hero__feed"[^>]*aria-label="Live agent activity"/),
+    'parent aside must carry the region aria-label');
   // Title and footer reframe to "working" tense
   assert.ok(html.includes('Your team, working'), 'expected new "working" title');
   assert.ok(html.match(/feed-card__count[^>]*>0 actions</), 'footer counter must start at 0');
