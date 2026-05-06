@@ -245,11 +245,103 @@
     });
   }
 
+  // ── rate chart ──────────────────────────────────────────────────────────
+  // When the chart section enters view: fire counters in the stats row,
+  // measure the polyline length, then add .is-drawing to the viz to trigger
+  // the CSS-driven line draw + dot pop-in + fill fade.
+  function runChart() {
+    const viz = document.querySelector('.rate-chart__viz');
+    if (!viz) return;
+    const line = viz.querySelector('.chart-line');
+    const stats = document.querySelector('.rate-chart__stats[data-count-driven]');
+
+    function play() {
+      // Measure the polyline length once and pass it to CSS via a custom prop
+      if (line && typeof line.getTotalLength === 'function') {
+        const len = line.getTotalLength();
+        viz.style.setProperty('--chart-line-length', String(len));
+        // Force a reflow so the dasharray/offset apply before .is-drawing
+        // eslint-disable-next-line no-unused-expressions
+        viz.offsetWidth;
+      }
+      viz.classList.add('is-drawing');
+      // Fire the three top-stat counters in lockstep with the line draw
+      if (stats) {
+        const counters = stats.querySelectorAll('[data-count-to]');
+        counters.forEach((el) => {
+          if (el.dataset.counted === '1') return;
+          el.dataset.counted = '1';
+          // 1500ms matches the line-draw duration
+          animateCount(el, { duration: 1500 });
+        });
+      }
+    }
+
+    if (reduceMotion) {
+      // Skip the line draw, just snap to final state
+      viz.classList.add('is-drawing');
+      if (stats) {
+        stats.querySelectorAll('[data-count-to]').forEach((el) => {
+          el.dataset.counted = '1';
+          animateCount(el, { duration: 0 });
+        });
+      }
+      return;
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        io.unobserve(entry.target);
+        play();
+      });
+    }, { threshold: 0.25 });
+    io.observe(viz);
+  }
+
+  // ── team cards (driven counters) ────────────────────────────────────────
+  // The team-grid stagger reveal is CSS-driven (transition-delay per card).
+  // When the section enters view, fire each card's metric counter offset by
+  // its stagger delay so the count-up lands just after the card finishes
+  // sliding in.
+  function runTeamCardCounters() {
+    const grid = document.querySelector('.team-grid');
+    if (!grid) return;
+    const metrics = grid.querySelectorAll('.team-detail-card__metric[data-count-driven] [data-count-to]');
+    if (!metrics.length) return;
+
+    function fire() {
+      const delays = [0, 180, 360]; // matches CSS team-grid stagger
+      metrics.forEach((el, i) => {
+        if (el.dataset.counted === '1') return;
+        el.dataset.counted = '1';
+        const delay = delays[i] || 0;
+        if (reduceMotion) {
+          animateCount(el, { duration: 0 });
+        } else {
+          setTimeout(() => animateCount(el), delay + 250);
+        }
+      });
+    }
+
+    if (reduceMotion) { fire(); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        io.unobserve(entry.target);
+        fire();
+      });
+    }, { threshold: 0.15 });
+    io.observe(grid);
+  }
+
   function boot() {
     wireScrollReveal();
     wireCounters();
     runTypewriter();
     runActivityFeed();
+    runChart();
+    runTeamCardCounters();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

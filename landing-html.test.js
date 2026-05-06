@@ -523,3 +523,22 @@ test('landing-animations.js seeds the activity feed with 8 atomic entries', () =
   // Spinner frames present
   assert.ok(raw.includes('SPINNER_FRAMES'),              'must define spinner frames');
 });
+
+test('landing.html chart SVG has class hooks for animation', () => {
+  const html = renderLandingHtml({ name: 'X', tagline: 'Y' });
+  assert.ok(html.includes('class="chart-fill"'),       'expected chart-fill class on filled area');
+  assert.ok(html.includes('class="chart-line"'),       'expected chart-line class on polyline');
+  assert.ok(html.includes('class="chart-annotation"'), 'expected chart-annotation class on final label');
+  const dotCount = (html.match(/class="chart-dot"/g) || []).length;
+  assert.ok(dotCount >= 12, `expected at least 12 chart-dot circles, got ${dotCount}`);
+});
+
+test('landing-animations.js wires chart line draw and driven counters', () => {
+  const path = require('path');
+  const raw = fs.readFileSync(path.join(__dirname, 'landing-animations.js'), 'utf8');
+  assert.ok(raw.includes('runChart'),              'must define runChart');
+  assert.ok(raw.includes('getTotalLength'),        'must measure polyline length');
+  assert.ok(raw.includes('--chart-line-length'),   'must set CSS custom prop for line length');
+  assert.ok(raw.includes("classList.add('is-drawing')"), 'must add is-drawing class');
+  assert.ok(raw.includes('runTeamCardCounters'),   'must define team-card counter driver');
+});
